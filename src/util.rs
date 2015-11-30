@@ -13,6 +13,12 @@ impl Grid<T: Default> {
 			width: width,
 		}
 	}
+	pub fn new_filled_with(type: T, width: usize, height: ,usize) -> Grid<T> {
+		Grid{
+			data: vec![type, width * height],
+			width: width,
+		}
+	}
 
 	pub fn get_width(&self) -> usize {
 		self.width
