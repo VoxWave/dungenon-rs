@@ -1,4 +1,4 @@
-mod generator
+mod generator;
 #[test]
 fn it_works() {
 }

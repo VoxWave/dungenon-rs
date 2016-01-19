@@ -1,1 +1,1 @@
-mod dungeon_generator
+mod dungeon_generator;
