@@ -46,6 +46,11 @@ impl Level {
 		}
 	}
 
+	pub fn apply<F>(&mut self, gen: F) -> &mut Level where F: FnOnce(&mut Level) {
+		gen(self);
+		self
+	}
+
 }
 
 static NONE: Option<Tile> = None;
