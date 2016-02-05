@@ -5,3 +5,4 @@ authors = ["VoxWave <victor_bankowski@hotmail.com>"]
 
 [dependencies]
 rand = "0.3.13"
+nalgebra = "0.5.1"
