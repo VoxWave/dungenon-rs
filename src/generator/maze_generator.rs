@@ -20,7 +20,17 @@ impl MazeGen {
         }
     }
 
-    pub fn generate(level: &mut Level) {
+    pub fn get_start_pos(&self) -> &Vec2 {
+        self.pos
+    }
+
+    pub fn set_start_pos(&mut self, pos: &Vec2) {
+        self.pos = pos.clone();
+    }
+
+    pub fn generate(&self, level: &mut Level) {
 
     }
+
+
 }
