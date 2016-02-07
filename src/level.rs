@@ -46,6 +46,8 @@ impl Level {
 		}
 	}
 
+	pub fn get_mut_tile_with_vec
+
 	pub fn apply<F>(&mut self, gen: F) -> &mut Level where F: FnOnce(&mut Level) {
 		gen(self);
 		self
