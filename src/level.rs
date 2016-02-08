@@ -46,7 +46,9 @@ impl Level {
 		}
 	}
 
-	pub fn get_mut_tile_with_vec
+	pub fn get_mut_tile_with_vec(&mut self, pos: &Vec2<usize>) -> Option<&mut Tile> {
+		self.get_mut_tile(pos.x, pos.y)
+	}
 
 	pub fn apply<F>(&mut self, gen: F) -> &mut Level where F: FnOnce(&mut Level) {
 		gen(self);
