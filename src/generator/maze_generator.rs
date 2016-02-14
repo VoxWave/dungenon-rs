@@ -32,12 +32,21 @@ impl MazeGen {
         let mut stack: Vec<&Vec2<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop while let Some(cur) = stack.pop() {
-            let mut tile = level.get_mut_tile_with_vec(cur);
+            match level.get_mut_tile_with_vec(cur) {
+                Some(tile) => {
+                    if tile == Tile::Void || tile == Tile::Floor {
+                        continue 'mainloop
+                    }
+                    let mut neighbours = self.get_neighbours();
+                    if neighbours
+                },
+                None => continue 'mainloop
+            }
 
         }
     }
 
-    fn get_neighbours() -> Vec<&Vec2<usize>> {
+    fn get_neighbours(pos: &Vec2) -> Vec<&Vec2<usize>> {
 
     }
 
