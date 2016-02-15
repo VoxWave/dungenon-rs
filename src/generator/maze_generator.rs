@@ -37,8 +37,12 @@ impl MazeGen {
                     if tile == Tile::Void || tile == Tile::Floor {
                         continue 'mainloop
                     }
-                    let mut neighbours = self.get_neighbours();
-                    if neighbours
+                    match self.get_neighbours() {
+                        Some(neighbours) => {
+                            neighbours.scramble();
+                        },
+                        None => continue 'mainloop
+                    }
                 },
                 None => continue 'mainloop
             }
