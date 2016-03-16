@@ -42,7 +42,10 @@ impl MazeGen {
                     match self.get_neighbours() {
                         Some(neighbours) => {
                             self.rand.shuffle(&mut neighbours);
-
+                            while !neighbours.is_empty() {
+                                stack.push(neighbours.pop());
+                            }
+                            level.get_mut_tile_with_vec(cur) = TileType::Floor;
                         },
                         None => continue 'mainloop
                     }
@@ -54,8 +57,10 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(pos: &Vec2) -> Vec<&Vec2<usize>> {
-
+    fn get_neighbours(level: &mut Level, pos: &Vec2) -> Vec<&Vec2<usize>> {
+        let mut neighbours: Vec<&Vec2<usize>> = Vec::new();
+        let mut floors = 0;
+        for d in
     }
 
 }

@@ -42,3 +42,14 @@ impl<T> IndexMut<(usize, usize)> for Grid<T> {
 		&mut self.data[x+y*self.width]
 	}
 }
+
+pub enum Directions {
+	Up,
+	Down,
+	Left,
+	Right,
+	Ur,
+	Dr,
+	Dl,
+	Ul,
+}
