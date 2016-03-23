@@ -60,7 +60,9 @@ impl MazeGen {
     fn get_neighbours(level: &mut Level, pos: &Vec2) -> Vec<&Vec2<usize>> {
         let mut neighbours: Vec<&Vec2<usize>> = Vec::new();
         let mut floors = 0;
-        for d in
+        for d in Direction::get_orthogonal_dir_vec() {
+            let vec = Vec2::new();
+        }
     }
 
 }

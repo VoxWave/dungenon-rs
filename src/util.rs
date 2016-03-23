@@ -53,3 +53,21 @@ pub enum Directions {
 	Dl,
 	Ul,
 }
+
+impl Directions {
+	pub fn get_vec(&self) -> Vec2<usize> {
+		let vec = match self {
+			Up => Vec2::new(0,1),
+			Down => Vec2::new(0,-1),
+			Left => Vec2::new(-1,0),
+			Right => Vec2::new(1,0),
+			Ur => Vec2::new(1,1),
+			Dr => Vec2::new(1,-1),
+			Dl => Vec2::new(-1,-1),
+			Ul => Vec2::new(-1,1),
+		}
+		vec
+	}
+
+	pub fn get
+}
