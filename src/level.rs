@@ -41,7 +41,7 @@ impl Level {
 
 	pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Option<&mut Tile> {
 		if x < self.get_width() && y < self.get_height() {
-			self.tiles[(x, y)]
+			self.tiles[(x, y)].as_mut()
 		} else {
 			None
 		}
@@ -72,10 +72,10 @@ impl Index<(usize, usize)> for Level {
     }
 }
 
-impl Index<&Vec2<usize>> for Level {
+impl Index<Vec2<usize>> for Level {
 	type Output= Option<Tile>;
 
-    pub fn index(&self, vec: &Vec2<usize>) -> &Option<Tile>{
+    pub fn index(&self, vec: Vec2<usize>) -> &Option<Tile>{
 		if vec.x < self.get_width() && vec.y < self.get_height() {
 			&self.tiles[(vec.x, vec.y)]
 		} else {

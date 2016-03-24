@@ -7,26 +7,31 @@ pub struct Grid<T> {
 	width: usize,
 }
 
-impl<T: Default> Grid<T> {
-	pub fn new(width:usize, height:usize) -> Grid<T> {
-		Grid{
-			data: vec![Default::default(), width * height],
-			width: width,
-		}
-	}
-	pub fn new_filled_with(thing: T, width: usize, height: usize) -> Grid<T> {
-		Grid{
-			data: vec![thing, width * height],
-			width: width,
-		}
-	}
-
+impl<T> Grid<T> {
 	pub fn get_width(&self) -> usize {
 		self.width
 	}
 
 	pub fn get_height(&self) -> usize {
 		self.data.len / self.width
+	}
+}
+
+impl<T: Default+Clone> Grid<T> {
+	pub fn new(width:usize, height:usize) -> Grid<T> {
+		Grid{
+			data: vec![Default::default(); width * height],
+			width: width,
+		}
+	}
+}
+
+impl<T: Clone> Grid<T> {
+	pub fn new_filled_with(thing: T, width: usize, height: usize) -> Grid<T> {
+		Grid{
+			data: vec![thing; width * height],
+			width: width,
+		}
 	}
 }
 
@@ -70,7 +75,7 @@ impl Direction {
 		vec
 	}
 
-	pub fn get_orthogonal_dir_vec2() {
-
+	pub fn get_orthogonal_dirs() -> &'static[Direction] {
+		&[Direction::Up, Direction::Down, Direction::Left, Direction::Right]
 	}
 }

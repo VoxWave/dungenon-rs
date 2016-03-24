@@ -11,7 +11,7 @@ use tile::Tile;
 use util::{Direction};
 
 pub struct MazeGen {
-    pos: Vec2<usize>,
+    pub pos: Vec2<usize>,
     rand: XorShiftRng,
 }
 
@@ -21,14 +21,6 @@ impl MazeGen {
             pos: Vec2::new(x,y),
             rand: XorShiftRng::rand(&mut OsRng::new().unwrap()),
         }
-    }
-
-    pub fn get_start_pos(&self) -> &Vec2<usize> {
-        self.pos
-    }
-
-    pub fn set_start_pos(&mut self, pos: &Vec2<usize>) {
-        self.pos = pos.clone();
     }
 
     pub fn generate(&self, level: &mut Level) {
@@ -42,13 +34,14 @@ impl MazeGen {
                     if tile == Tile::Void || tile == Tile::Floor {
                         continue 'mainloop
                     }
+                    let _:() = self.get_neighbours();
                     match self.get_neighbours() {
                         Some(neighbours) => {
                             self.rand.shuffle(&mut neighbours);
                             while !neighbours.is_empty() {
                                 stack.push(neighbours.pop());
                             }
-                            level.get_mut_tile_with_vec(cur) = Tile::Floor;
+                            *tile = Tile::Floor;
                         },
                         None => continue 'mainloop
                     }
@@ -61,18 +54,19 @@ impl MazeGen {
     }
 
     fn get_neighbours(level: &mut Level, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
-        let mut neighbours: Vec<&Vec2<usize>> = Vec::new();
+        let mut neighbours: Vec<Vec2<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
-            match level[&d.get_vec() + pos] {
-                Tile::Floor => {
+            match level[d.get_vec() + pos.clone()] {
+                Some(Tile::Floor) => {
                     floors += 1;
                     if floors > 1 {
                         return None;
                     }
-                    neighbours.push(&d.get_vec() + pos)
                 },
+                _ => {},
             }
+            neighbours.push(d.get_vec() + pos.clone())
         }
         Some(neighbours)
     }
