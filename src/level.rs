@@ -1,6 +1,7 @@
 use tile::Tile;
 use util::Grid;
 use std::ops::{Index};
+use na::Vec2;
 
 pub struct Level {
 	tiles: Grid<Option<Tile>>,
@@ -65,6 +66,18 @@ impl Index<(usize, usize)> for Level {
     pub fn index(&self, (x, y): (usize, usize)) -> &Option<Tile>{
 		if x < self.get_width() && y < self.get_height() {
 			&self.tiles[(x, y)]
+		} else {
+			&NONE
+		}
+    }
+}
+
+impl Index<&Vec2<usize>> for Level {
+	type Output= Option<Tile>;
+
+    pub fn index(&self, vec: &Vec2<usize>) -> &Option<Tile>{
+		if vec.x < self.get_width() && vec.y < self.get_height() {
+			&self.tiles[(vec.x, vec.y)]
 		} else {
 			&NONE
 		}

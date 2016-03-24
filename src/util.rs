@@ -1,5 +1,6 @@
 use std::ops::{Index, IndexMut};
 use std::default::Default;
+use na::Vec2;
 
 pub struct Grid<T> {
 	data: Vec<T>,
@@ -43,7 +44,7 @@ impl<T> IndexMut<(usize, usize)> for Grid<T> {
 	}
 }
 
-pub enum Directions {
+pub enum Direction {
 	Up,
 	Down,
 	Left,
@@ -54,7 +55,7 @@ pub enum Directions {
 	Ul,
 }
 
-impl Directions {
+impl Direction {
 	pub fn get_vec(&self) -> Vec2<usize> {
 		let vec = match self {
 			Up => Vec2::new(0,1),
@@ -65,9 +66,11 @@ impl Directions {
 			Dr => Vec2::new(1,-1),
 			Dl => Vec2::new(-1,-1),
 			Ul => Vec2::new(-1,1),
-		}
+		};
 		vec
 	}
 
-	pub fn get
+	pub fn get_orthogonal_dir_vec2() {
+
+	}
 }

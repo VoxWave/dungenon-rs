@@ -7,6 +7,9 @@ use rand::XorShiftRng;
 use rand::Rand;
 use rand::Rng;
 
+use tile::Tile;
+use util::{Direction};
+
 pub struct MazeGen {
     pos: Vec2<usize>,
     rand: XorShiftRng,
@@ -20,18 +23,18 @@ impl MazeGen {
         }
     }
 
-    pub fn get_start_pos(&self) -> &Vec2 {
+    pub fn get_start_pos(&self) -> &Vec2<usize> {
         self.pos
     }
 
-    pub fn set_start_pos(&mut self, pos: &Vec2) {
+    pub fn set_start_pos(&mut self, pos: &Vec2<usize>) {
         self.pos = pos.clone();
     }
 
     pub fn generate(&self, level: &mut Level) {
-        let mut stack: Vec<&Vec2<usize>> = Vec::new();
+        let mut stack: Vec<Vec2<usize>> = Vec::new();
         stack.push(self.pos);
-        'mainloop while let Some(cur) = stack.pop() {
+        'mainloop: while let Some(cur) = stack.pop() {
 
             match level.get_mut_tile_with_vec(cur) {
 
@@ -45,7 +48,7 @@ impl MazeGen {
                             while !neighbours.is_empty() {
                                 stack.push(neighbours.pop());
                             }
-                            level.get_mut_tile_with_vec(cur) = TileType::Floor;
+                            level.get_mut_tile_with_vec(cur) = Tile::Floor;
                         },
                         None => continue 'mainloop
                     }
@@ -57,12 +60,21 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(level: &mut Level, pos: &Vec2) -> Vec<&Vec2<usize>> {
+    fn get_neighbours(level: &mut Level, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
         let mut neighbours: Vec<&Vec2<usize>> = Vec::new();
         let mut floors = 0;
-        for d in Direction::get_orthogonal_dir_vec() {
-            let vec = Vec2::new();
+        for d in Direction::get_orthogonal_dirs() {
+            match level[&d.get_vec() + pos] {
+                Tile::Floor => {
+                    floors += 1;
+                    if floors > 1 {
+                        return None;
+                    }
+                    neighbours.push(&d.get_vec() + pos)
+                },
+            }
         }
+        Some(neighbours)
     }
 
 }
