@@ -13,7 +13,7 @@ impl<T> Grid<T> {
 	}
 
 	pub fn get_height(&self) -> usize {
-		self.data.len / self.width
+		self.data.len() / self.width
 	}
 }
 
@@ -38,13 +38,13 @@ impl<T: Clone> Grid<T> {
 impl<T> Index<(usize, usize)> for Grid<T> {
 	type Output= T;
 
-    pub fn index(&self, (x, y): (usize, usize)) -> &T{
+    fn index(&self, (x, y): (usize, usize)) -> &T{
     	&self.data[x+y*self.width]
     }
 }
 
 impl<T> IndexMut<(usize, usize)> for Grid<T> {
-	pub fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut T {
+	fn index_mut(&mut self, (x, y): (usize, usize)) -> &mut T {
 		&mut self.data[x+y*self.width]
 	}
 }
@@ -60,9 +60,12 @@ pub enum Direction {
 	Ul,
 }
 
+static ORTHOGONAL: [Direction; 4] = [Direction::Up, Direction::Down, Direction::Left, Direction::Right];
+
 impl Direction {
-	pub fn get_vec(&self) -> Vec2<usize> {
-		let vec = match self {
+	pub fn get_vec(&self) -> Vec2<isize> {
+		use self::Direction::*;
+		let vec = match *self {
 			Up => Vec2::new(0,1),
 			Down => Vec2::new(0,-1),
 			Left => Vec2::new(-1,0),
@@ -76,6 +79,6 @@ impl Direction {
 	}
 
 	pub fn get_orthogonal_dirs() -> &'static[Direction] {
-		&[Direction::Up, Direction::Down, Direction::Left, Direction::Right]
+		&ORTHOGONAL
 	}
 }

@@ -26,7 +26,7 @@ impl Level {
 
 		for x in 0..width {
 			for y in 0..height {
-				self.tiles[(x, y)] = Some(tile);
+				self.tiles[(x, y)] = Some(tile.clone());
 			}
 		}
 	}
@@ -63,7 +63,7 @@ static NONE: Option<Tile> = None;
 impl Index<(usize, usize)> for Level {
 	type Output= Option<Tile>;
 
-    pub fn index(&self, (x, y): (usize, usize)) -> &Option<Tile>{
+    fn index(&self, (x, y): (usize, usize)) -> &Option<Tile>{
 		if x < self.get_width() && y < self.get_height() {
 			&self.tiles[(x, y)]
 		} else {
@@ -75,7 +75,7 @@ impl Index<(usize, usize)> for Level {
 impl Index<Vec2<usize>> for Level {
 	type Output= Option<Tile>;
 
-    pub fn index(&self, vec: Vec2<usize>) -> &Option<Tile>{
+    fn index(&self, vec: Vec2<usize>) -> &Option<Tile>{
 		if vec.x < self.get_width() && vec.y < self.get_height() {
 			&self.tiles[(vec.x, vec.y)]
 		} else {

@@ -23,23 +23,22 @@ impl MazeGen {
         }
     }
 
-    pub fn generate(&self, level: &mut Level) {
+    pub fn generate(&mut self, level: &mut Level) {
         let mut stack: Vec<Vec2<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop: while let Some(cur) = stack.pop() {
-
-            match level.get_mut_tile_with_vec(cur) {
+            let neighbours = Self::get_neighbours(level, &cur);
+            match level.get_mut_tile_with_vec(&cur) {
 
                 Some(tile) => {
-                    if tile == Tile::Void || tile == Tile::Floor {
+                    if *tile == Tile::Void || *tile == Tile::Floor {
                         continue 'mainloop
                     }
-                    let _:() = self.get_neighbours();
-                    match self.get_neighbours() {
-                        Some(neighbours) => {
+                    match neighbours {
+                        Some(mut neighbours) => {
                             self.rand.shuffle(&mut neighbours);
-                            while !neighbours.is_empty() {
-                                stack.push(neighbours.pop());
+                            while let Some(p) = neighbours.pop() {
+                                stack.push(p);
                             }
                             *tile = Tile::Floor;
                         },
@@ -53,11 +52,15 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(level: &mut Level, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
+    fn get_neighbours(level: &Level, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
         let mut neighbours: Vec<Vec2<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
-            match level[d.get_vec() + pos.clone()] {
+            let mut pos = pos.clone();
+            let dvec = d.get_vec();
+            pos.x = (pos.x as isize + dvec.x) as usize;
+            pos.y = (pos.y as isize + dvec.y) as usize;
+            match level[pos] {
                 Some(Tile::Floor) => {
                     floors += 1;
                     if floors > 1 {
@@ -66,7 +69,7 @@ impl MazeGen {
                 },
                 _ => {},
             }
-            neighbours.push(d.get_vec() + pos.clone())
+            neighbours.push(pos);
         }
         Some(neighbours)
     }
