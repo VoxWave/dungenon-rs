@@ -1,0 +1,14 @@
+[package]
+name = "dungenon-drawer"
+version = "0.1.0"
+authors = ["Victor Bankowski <victor_bankowski@hotmail.com>"]
+
+[dependencies]
+dungenon = { git = "https://github.com/VoxWave/dungenon-rs.git"}
+#dungenon = {path = "../dungenon-rs"}
+cast = "0.1.0"
+
+[dependencies.image]
+version = "0.7.0"
+default-features = false
+features = ["png_codec"]
