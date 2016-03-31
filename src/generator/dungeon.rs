@@ -1,3 +1,1 @@
-pub struct DungeonGen {
-    
-}
+pub struct DungeonGen;
