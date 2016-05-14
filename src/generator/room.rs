@@ -3,7 +3,7 @@ use rand::XorShiftRng;
 use rand::Rand;
 use rand::Rng;
 
-use na::Vec2;
+use na::Point2;
 
 use level::Level;
 
@@ -13,6 +13,7 @@ pub struct RoomGen {
     max_room_size: usize,
     min_room_size: usize,
     attempts: u64,
+    rooms: Vec<Box>,
 }
 
 impl RoomGen {
@@ -23,28 +24,37 @@ impl RoomGen {
             max_room_size: max_room_size,
             min_room_size: min_room_size,
             attempts: attempts,
+            rooms: Vec::new(),
         }
     }
 
     pub fn generate(&mut self, level: &mut Level) {
-        let mut rooms = Vec::new();
         for i in 0..self.attempts {
-            let room = Self::generate_box(level);
+            let room = self.generate_box(level);
 
-            let fits = !self.check_collisions();
+            let fits = !self.check_collisions(room);
             if fits {
                 rooms.append(room);
             }
         }
     }
 
-    pub fn generate_box(level: &mut Level) -> Box {
+    pub fn reset_rooms(&mut self) {
+        self.rooms = Vec::new();
+    }
+
+    pub fn generate_box(&mut self, level: &mut Level) -> Box {
+        let mut min = Point2::new(self.rand_x.);
+    }
+
+    pub fn check_collisions(&self, room: Room) {
+
     }
 }
 
 
 
-struct Box {
-    pub min: Vec2<isize>,
-    pub max:Vec2<isize>,
+struct Room {
+    pub min: Point2<isize>,
+    pub max: Point2<isize>,
 }
