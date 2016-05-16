@@ -1,5 +1,5 @@
 use rand::os::OsRng;
-use rand::{XorShiftRng, Rand, Rng};
+use rand::{XorShiftRng, Rand};
 use rand::distributions::{IndependentSample, Range};
 
 use na::Pnt2 as Point2;
@@ -32,10 +32,10 @@ impl RoomGen {
     }
 
     pub fn generate(&mut self, level: &mut Level) {
-        for i in 0..self.attempts {
+        for _ in 0..self.attempts {
             let room = self.generate_box(level);
 
-            let fits = !self.check_collisions(room);
+            let fits = !self.check_collisions(&room);
             if fits {
                 self.rooms.push(room);
             }
@@ -50,7 +50,7 @@ impl RoomGen {
     fn generate_box(&mut self, level: &mut Level) -> Room {
         let min_range_x = Range::new(0, level.get_width());
         let min_range_y = Range::new(0, level.get_height());
-        let mut min = Point2::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
+        let min = Point2::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
 
         let max_range = Range::new(self.min_room_size, self.max_room_size);
         let mut max = Point2::new(max_range.ind_sample(&mut self.rand_x), max_range.ind_sample(&mut self.rand_y));
@@ -62,8 +62,8 @@ impl RoomGen {
         Room{min: min, max: max}
     }
 
-    fn check_collisions(&self, room: Room) -> bool {
-        for b in self.rooms {
+    fn check_collisions(&self, room: &Room) -> bool {
+        for b in &self.rooms {
             if room.overlaps(b) {
                 return true;
             }
@@ -73,7 +73,7 @@ impl RoomGen {
 
     fn carve(&self, level: &mut Level) {
         let room_distance = self.room_distance.clone();
-        for room in self.rooms {
+        for room in &self.rooms {
             for y in room.min.y..room.max.y-room_distance+1 {
                 for x in room.min.x..room.max.x-room_distance+1 {
                     match level.get_mut_tile(x, y) {
@@ -94,7 +94,7 @@ struct Room {
 }
 
 impl Room {
-    pub fn overlaps(&self, room: Room) -> bool {
+    pub fn overlaps(&self, room: &Room) -> bool {
         if self.min.x > room.max.x || room.min.x > self.max.x {
             return false;
         }
