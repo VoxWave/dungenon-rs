@@ -84,7 +84,7 @@ impl Index<Vec2<usize>> for Level {
     }
 }
 
-pub fn fill_dead_ends(level: &mut Level) {
+pub fn fill_dead_ends(level: &mut Level) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
@@ -102,10 +102,22 @@ pub fn fill_dead_ends(level: &mut Level) {
     for (x,y) in deadends {
         level.get_mut_tile(x, y) = Some(Tile::Wall);
     }
+    deadends.is_empty()
 }
 
-pub fn is_deadend(level: &mut Level) {
+pub fn is_deadend(level: &mut Level) -> bool {
+    use util::Direction;
+    let mut paths = 0;
     for vector in Direction::get_orthogonal_dirs() {
-
+        match level.get_mut_tile_with_vec(vector) {
+            Some(tile) => {
+                match tile {
+                    Tile::Floor => paths+=1,
+                    _ => {},
+                }
+            }
+            None => {}
+        }
 	}
+    paths < 2
 }
