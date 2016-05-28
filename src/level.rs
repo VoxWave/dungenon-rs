@@ -89,27 +89,37 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
             match level[(x,y)] {
-                Tile::Floor => {
-                    if is_deadend() {
-                        deadends.push((x,y));
+                Some(n) => {
+                    match n {
+                        Tile::Floor => {
+                            if is_deadend(level, x, y) {
+                                deadends.push((x,y));
+                            }
+                        },
+                        _ => {},
                     }
                 },
-                _ => {},
+                None => {},
             }
         }
     }
 
     for (x,y) in deadends {
-        level.get_mut_tile(x, y) = Some(Tile::Wall);
+        match level.get_mut_tile(x, y) {
+            Some(tile) => {
+                *tile = Tile::Floor;
+            }
+        }
     }
     deadends.is_empty()
 }
 
-pub fn is_deadend(level: &mut Level) -> bool {
+pub fn is_deadend(level: &mut Level, x: usize, y: usize) -> bool {
     use util::Direction;
     let mut paths = 0;
-    for vector in Direction::get_orthogonal_dirs() {
-        match level.get_mut_tile_with_vec(vector) {
+    for dir in Direction::get_orthogonal_dirs() {
+        
+        match level[&Direction::get_vec(dir)] {
             Some(tile) => {
                 match tile {
                     Tile::Floor => paths+=1,
