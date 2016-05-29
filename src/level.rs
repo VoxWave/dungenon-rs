@@ -98,7 +98,7 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
         }
     }
 
-    for (x,y) in deadends {
+    for &(x,y) in &deadends {
         if let Some(tile) = level.get_mut_tile(x, y) {
             *tile = Tile::Floor;
         }
@@ -108,7 +108,6 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
 
 pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
     use util::Direction;
-    use std::num;
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {
         let vector = dir.get_vec();
