@@ -84,7 +84,7 @@ impl Index<Vec2<usize>> for Level {
     }
 }
 
-pub fn fill_dead_ends(level: &mut Level) -> bool {
+pub fn fill_dead_end_tiles(level: &mut Level) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
