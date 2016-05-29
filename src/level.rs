@@ -88,18 +88,12 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
-            match level[(x,y)] {
-                Some(n) => {
-                    match n {
-                        Tile::Floor => {
-                            if is_deadend(level, x, y) {
-                                deadends.push((x,y));
-                            }
-                        },
-                        _ => {},
+            if let Some(ref n) = level[(x,y)] {
+                if let &Tile::Floor = n {
+                    if is_deadend(level, x, y) {
+                        deadends.push((x,y));
                     }
-                },
-                None => {},
+                }
             }
         }
     }
@@ -112,7 +106,7 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
     deadends.is_empty()
 }
 
-pub fn is_deadend(level: &mut Level, x: usize, y: usize) -> bool {
+pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
     use util::Direction;
     use std::num;
     let mut paths = 0;
@@ -123,14 +117,8 @@ pub fn is_deadend(level: &mut Level, x: usize, y: usize) -> bool {
             _ => continue,
         };
 
-        match level[coord] {
-            Some(tile) => {
-                match tile {
-                    Tile::Floor => paths+=1,
-                    _ => {},
-                }
-            }
-            None => {}
+        if let Some(Tile::Floor) = level[coord] {
+            paths += 1;
         }
 	}
     paths < 2
