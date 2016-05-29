@@ -1,6 +1,6 @@
 use generator::{MazeGen, RoomGen};
 use level::Level;
-use level::fill_dead_ends;
+use level::fill_dead_end_tiles;
 
 pub struct DungeonGen {
     mazegen: MazeGen,
@@ -19,6 +19,6 @@ impl DungeonGen {
         level.apply(|m| self.mazegen.generate(m))
         .apply(|m| self.roomgen.generate(m));
 
-        while fill_dead_ends(level) {}
+        while fill_dead_end_tiles(level) {}
     }
 }
