@@ -105,10 +105,8 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
     }
 
     for (x,y) in deadends {
-        match level.get_mut_tile(x, y) {
-            Some(tile) => {
-                *tile = Tile::Floor;
-            }
+        if let Some(tile) = level.get_mut_tile(x, y) {
+            *tile = Tile::Floor;
         }
     }
     deadends.is_empty()
@@ -116,10 +114,16 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
 
 pub fn is_deadend(level: &mut Level, x: usize, y: usize) -> bool {
     use util::Direction;
+    use std::num;
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {
-        
-        match level[&Direction::get_vec(dir)] {
+        let vector = dir.get_vec();
+        let coord = match (add_isize_to_usize(vector.x, x), add_isize_to_usize(vector.y, y)) {
+            (Some(x), Some(y)) => (x,y),
+            _ => continue,
+        };
+
+        match level[coord] {
             Some(tile) => {
                 match tile {
                     Tile::Floor => paths+=1,
@@ -130,4 +134,15 @@ pub fn is_deadend(level: &mut Level, x: usize, y: usize) -> bool {
         }
 	}
     paths < 2
+}
+
+fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
+    if i < 0 && u != 0 {
+        u -= (-i) as usize;
+    } else if i >= 0 && u < usize::max_value() {
+        u += i as usize;
+    } else {
+        return None
+    }
+    Some(u)
 }
