@@ -120,7 +120,7 @@ pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
             paths += 1;
         }
 	}
-    paths < 2
+    paths < 1
 }
 
 fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
