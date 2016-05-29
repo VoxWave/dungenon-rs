@@ -100,7 +100,7 @@ pub fn fill_dead_ends(level: &mut Level) -> bool {
 
     for &(x,y) in &deadends {
         if let Some(tile) = level.get_mut_tile(x, y) {
-            *tile = Tile::Floor;
+            *tile = Tile::Wall;
         }
     }
     deadends.is_empty()
@@ -120,7 +120,7 @@ pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
             paths += 1;
         }
 	}
-    paths < 1
+    paths < 2
 }
 
 fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
