@@ -97,13 +97,14 @@ pub fn fill_dead_end_tiles(level: &mut Level) -> bool {
             }
         }
     }
-
+    let mut filled_deadend = false;
     for &(x,y) in &deadends {
         if let Some(tile) = level.get_mut_tile(x, y) {
             *tile = Tile::Wall;
+            filled_deadend = true;
         }
     }
-    deadends.is_empty()
+    filled_deadend
 }
 
 pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
