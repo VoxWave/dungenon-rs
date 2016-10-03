@@ -63,7 +63,7 @@ static NONE: Option<Tile> = None;
 impl Index<(usize, usize)> for Level<T> {
     type Output= Option<T>;
 
-    fn index(&self, (x, y): (usize, usize)) -> &Option<Tile>{
+    fn index(&self, (x, y): (usize, usize)) -> &Option<T>{
         if x < self.get_width() && y < self.get_height() {
             &self.tiles[(x, y)]
         } else {
@@ -72,10 +72,10 @@ impl Index<(usize, usize)> for Level<T> {
     }
 }
 
-impl Index<Vec2<usize>> for Level {
-    type Output= Option<Tile>;
+impl Index<Vec2<usize>> for Level<T> {
+    type Output= Option<T>;
 
-    fn index(&self, vec: Vec2<usize>) -> &Option<Tile>{
+    fn index(&self, vec: Vec2<usize>) -> &Option<T>{
         if vec.x < self.get_width() && vec.y < self.get_height() {
             &self.tiles[(vec.x, vec.y)]
         } else {
@@ -84,7 +84,7 @@ impl Index<Vec2<usize>> for Level {
     }
 }
 
-pub fn fill_dead_end_tiles(level: &mut Level) -> bool {
+pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
@@ -107,7 +107,7 @@ pub fn fill_dead_end_tiles(level: &mut Level) -> bool {
     filled_deadend
 }
 
-pub fn is_deadend(level: &Level, x: usize, y: usize) -> bool {
+pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
     use util::Direction;
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {
