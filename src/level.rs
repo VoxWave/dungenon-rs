@@ -3,24 +3,24 @@ use util::Grid;
 use std::ops::{Index};
 use na::Vec2;
 
-pub struct Level {
-    tiles: Grid<Option<Tile>>,
+pub struct Level<T> {
+    tiles: Grid<Option<T>>,
 }
 
-impl Level {
-    pub fn new(width: usize, height: usize) -> Level {
+impl<T> Level<T> {
+    pub fn new(width: usize, height: usize) -> Level<T> {
         Level{
-            tiles: Grid::new_filled_with(Some(Tile::Void) ,width, height),
+            tiles: Grid::new_filled_with(None ,width, height),
         }
     }
 
-    pub fn new_filled_with(tile: Option<Tile>, width: usize, height: usize) -> Level {
+    pub fn new_filled_with(tile: Option<T>, width: usize, height: usize) -> Level {
         Level{
             tiles: Grid::new_filled_with(tile, width, height),
         }
     }
 
-    pub fn fill_with(&mut self, tile: Tile) {
+    pub fn fill_with(&mut self, tile: T) {
         let width = self.tiles.get_width();
         let height = self.tiles.get_height();
 
@@ -39,7 +39,7 @@ impl Level {
         self.tiles.get_height()
     }
 
-    pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Option<&mut Tile> {
+    pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Option<&mut T> {
         if x < self.get_width() && y < self.get_height() {
             self.tiles[(x, y)].as_mut()
         } else {
@@ -47,11 +47,11 @@ impl Level {
         }
     }
 
-    pub fn get_mut_tile_with_vec(&mut self, pos: &Vec2<usize>) -> Option<&mut Tile> {
+    pub fn get_mut_tile_with_vec(&mut self, pos: &Vec2<usize>) -> Option<&mut T> {
         self.get_mut_tile(pos.x, pos.y)
     }
 
-    pub fn apply<F>(&mut self, gen: F) -> &mut Level where F: FnOnce(&mut Level) {
+    pub fn apply<F>(&mut self, gen: F) -> &mut Level<T> where F: FnOnce(&mut Level<T>) {
         gen(self);
         self
     }
@@ -60,8 +60,8 @@ impl Level {
 
 static NONE: Option<Tile> = None;
 
-impl Index<(usize, usize)> for Level {
-    type Output= Option<Tile>;
+impl Index<(usize, usize)> for Level<T> {
+    type Output= Option<T>;
 
     fn index(&self, (x, y): (usize, usize)) -> &Option<Tile>{
         if x < self.get_width() && y < self.get_height() {
