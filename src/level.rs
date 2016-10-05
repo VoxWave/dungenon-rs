@@ -14,7 +14,7 @@ impl<T> Level<T> {
         }
     }
 
-    pub fn new_filled_with(tile: Option<T>, width: usize, height: usize) -> Level {
+    pub fn new_filled_with(tile: Option<T>, width: usize, height: usize) -> Level<T> {
         Level{
             tiles: Grid::new_filled_with(tile, width, height),
         }
@@ -117,7 +117,7 @@ pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
             _ => continue,
         };
 
-        if let Some(Tile::Floor) = level[coord] {
+        if let Some(Tile::Floor(_)) = level[coord] {
             paths += 1;
         }
 	}

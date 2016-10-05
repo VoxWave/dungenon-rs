@@ -5,8 +5,8 @@
 //the walls so that the level would be more visually varied. You could also also have an array of
 //different types of floors which each have their own properties (normal floor, icy floor, lava floor etc.) 
 pub enum Tile {
-	Wall{index: usize},
-	Floor{index: usize},
-	Void{index: usize},
-    Faction{index: usize},
+	Wall(usize),
+	Floor(usize),
+	Void(usize),
+    Faction(usize),
 }

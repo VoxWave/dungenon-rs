@@ -31,7 +31,7 @@ impl RoomGen {
         }
     }
 
-    pub fn generate(&mut self, level: &mut Level) {
+    pub fn generate(&mut self, level: &mut Level<Tile>) {
         for _ in 0..self.attempts {
             let room = self.generate_box(level);
 
@@ -47,7 +47,7 @@ impl RoomGen {
         self.rooms = Vec::new();
     }
 
-    fn generate_box(&mut self, level: &mut Level) -> Room {
+    fn generate_box(&mut self, level: &mut Level<Tile>) -> Room {
         let min_range_x = Range::new(0, level.get_width());
         let min_range_y = Range::new(0, level.get_height());
         let min = Point2::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
@@ -71,13 +71,13 @@ impl RoomGen {
         false
     }
 
-    fn carve(&self, level: &mut Level) {
+    fn carve(&self, level: &mut Level<Tile>) {
         let room_distance = self.room_distance.clone();
         for room in &self.rooms {
             for y in room.min.y..room.max.y-room_distance+1 {
                 for x in room.min.x..room.max.x-room_distance+1 {
                     match level.get_mut_tile(x, y) {
-                        Some(tile) => *tile = Tile::Floor,
+                        Some(tile) => *tile = Tile::Floor{index: 0},
                         None => {}
                     }
                 }

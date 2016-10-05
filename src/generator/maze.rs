@@ -23,7 +23,7 @@ impl MazeGen {
         }
     }
 
-    pub fn generate(&mut self, level: &mut Level) {
+    pub fn generate(&mut self, level: &mut Level<Tile>) {
         let mut stack: Vec<Vec2<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop: while let Some(cur) = stack.pop() {
@@ -31,7 +31,7 @@ impl MazeGen {
             match level.get_mut_tile_with_vec(&cur) {
 
                 Some(tile) => {
-                    if *tile == Tile::Void || *tile == Tile::Floor {
+                    if *tile == Tile::Void(_) || *tile == Tile::Floor(_) {
                         continue 'mainloop
                     }
                     match neighbours {
@@ -52,7 +52,7 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(level: &Level, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
+    fn get_neighbours(level: &Level<Tile>, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
         let mut neighbours: Vec<Vec2<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
@@ -61,7 +61,7 @@ impl MazeGen {
             pos.x = (pos.x as isize + dvec.x) as usize;
             pos.y = (pos.y as isize + dvec.y) as usize;
             match level[pos] {
-                Some(Tile::Floor) => {
+                Some(Tile::Floor(_)) => {
                     floors += 1;
                     if floors > 1 {
                         return None;
