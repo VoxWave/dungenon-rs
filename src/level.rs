@@ -8,29 +8,6 @@ pub struct Level<T> {
 }
 
 impl<T> Level<T> {
-    pub fn new(width: usize, height: usize) -> Level<T> {
-        Level{
-            tiles: Grid::new_filled_with(None ,width, height),
-        }
-    }
-
-    pub fn new_filled_with(tile: Option<T>, width: usize, height: usize) -> Level<T> {
-        Level{
-            tiles: Grid::new_filled_with(tile, width, height),
-        }
-    }
-
-    pub fn fill_with(&mut self, tile: T) {
-        let width = self.tiles.get_width();
-        let height = self.tiles.get_height();
-
-        for x in 0..width {
-            for y in 0..height {
-                self.tiles[(x, y)] = Some(tile.clone());
-            }
-        }
-    }
-
     pub fn get_width(&self) -> usize {
         self.tiles.get_width()
     }
@@ -58,6 +35,31 @@ impl<T> Level<T> {
 
 }
 
+impl<T: Clone> Level<T> {
+    pub fn fill_with(&mut self, tile: T) {
+        let width = self.tiles.get_width();
+        let height = self.tiles.get_height();
+
+        for x in 0..width {
+            for y in 0..height {
+                self.tiles[(x, y)] = Some(tile.clone());
+            }
+        }
+    }
+
+    pub fn new(width: usize, height: usize) -> Level<T> {
+        Level{
+            tiles: Grid::new_filled_with(None ,width, height),
+        }
+    }
+
+    pub fn new_filled_with(tile: Option<T>, width: usize, height: usize) -> Level<T> {
+        Level{
+            tiles: Grid::new_filled_with(tile, width, height),
+        }
+    }
+}
+
 static NONE: &'static Option<()> = &None;
 
 impl<T> Index<(usize, usize)> for Level<T> {
@@ -67,7 +69,7 @@ impl<T> Index<(usize, usize)> for Level<T> {
         if x < self.get_width() && y < self.get_height() {
             &self.tiles[(x, y)]
         } else {
-             unsafe{&*(NONE as *const _ as *const _)}
+             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
         }
     }
 }
@@ -79,7 +81,7 @@ impl<T> Index<Vec2<usize>> for Level<T> {
         if vec.x < self.get_width() && vec.y < self.get_height() {
             &self.tiles[(vec.x, vec.y)]
         } else {
-             unsafe{&*(NONE as *const _ as *const _)}
+             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
         }
     }
 }

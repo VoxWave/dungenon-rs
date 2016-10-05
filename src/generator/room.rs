@@ -77,7 +77,7 @@ impl RoomGen {
             for y in room.min.y..room.max.y-room_distance+1 {
                 for x in room.min.x..room.max.x-room_distance+1 {
                     match level.get_mut_tile(x, y) {
-                        Some(tile) => *tile = Tile::Floor{index: 0},
+                        Some(tile) => *tile = Tile::Floor(0),
                         None => {}
                     }
                 }

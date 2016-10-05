@@ -31,8 +31,9 @@ impl MazeGen {
             match level.get_mut_tile_with_vec(&cur) {
 
                 Some(tile) => {
-                    if *tile == Tile::Void(_) || *tile == Tile::Floor(_) {
-                        continue 'mainloop
+                    match *tile {
+                        Tile::Void(_) | Tile::Floor(_) => {continue 'mainloop},
+                        _ => {},
                     }
                     match neighbours {
                         Some(mut neighbours) => {
@@ -40,7 +41,7 @@ impl MazeGen {
                             while let Some(p) = neighbours.pop() {
                                 stack.push(p);
                             }
-                            *tile = Tile::Floor;
+                            *tile = Tile::Floor(0);
                         },
                         None => continue 'mainloop
                     }
