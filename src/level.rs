@@ -58,28 +58,28 @@ impl<T> Level<T> {
 
 }
 
-static NONE: Option<Tile> = None;
+static NONE: &'static Option<()> = &None;
 
-impl Index<(usize, usize)> for Level<T> {
+impl<T> Index<(usize, usize)> for Level<T> {
     type Output= Option<T>;
 
     fn index(&self, (x, y): (usize, usize)) -> &Option<T>{
         if x < self.get_width() && y < self.get_height() {
             &self.tiles[(x, y)]
         } else {
-            &NONE
+             unsafe{&*(NONE as *const _ as *const _)}
         }
     }
 }
 
-impl Index<Vec2<usize>> for Level<T> {
+impl<T> Index<Vec2<usize>> for Level<T> {
     type Output= Option<T>;
 
     fn index(&self, vec: Vec2<usize>) -> &Option<T>{
         if vec.x < self.get_width() && vec.y < self.get_height() {
             &self.tiles[(vec.x, vec.y)]
         } else {
-            &NONE
+             unsafe{&*(NONE as *const _ as *const _)}
         }
     }
 }
@@ -89,7 +89,7 @@ pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
             if let Some(ref n) = level[(x,y)] {
-                if let &Tile::Floor = n {
+                if let &Tile::Floor(_) = n {
                     if is_deadend(level, x, y) {
                         deadends.push((x,y));
                     }
@@ -100,7 +100,7 @@ pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     let mut filled_deadend = false;
     for &(x,y) in &deadends {
         if let Some(tile) = level.get_mut_tile(x, y) {
-            *tile = Tile::Wall;
+            *tile = Tile::Wall(0);
             filled_deadend = true;
         }
     }
