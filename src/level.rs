@@ -120,7 +120,7 @@ pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
         if let Some(Tile::Floor(_)) = level[coord] {
             paths += 1;
         }
-	}
+    }
     paths < 2
 }
 
