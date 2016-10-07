@@ -69,7 +69,7 @@ impl<T> Index<(usize, usize)> for Level<T> {
         if x < self.get_width() && y < self.get_height() {
             &self.tiles[(x, y)]
         } else {
-             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
+             //unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
         }
     }
 }
