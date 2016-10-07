@@ -81,7 +81,7 @@ impl<T> Index<Vec2<usize>> for Level<T> {
         if vec.x < self.get_width() && vec.y < self.get_height() {
             &self.tiles[(vec.x, vec.y)]
         } else {
-             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
+             //unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic which is wrong.
         }
     }
 }
