@@ -9,3 +9,9 @@ pub enum Tile {
     Floor(usize),
     Void(usize),
 }
+
+impl Default for Tile {
+    fn default() -> Tile {
+        Tile::Void(0)
+    }
+}

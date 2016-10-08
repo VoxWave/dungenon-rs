@@ -4,7 +4,7 @@ use std::ops::{Index};
 use na::Vec2;
 
 pub struct Level<T> {
-    tiles: Grid<Option<T>>,
+    tiles: Grid<T>,
 }
 
 impl<T> Level<T> {
@@ -14,6 +14,22 @@ impl<T> Level<T> {
 
     pub fn get_height(&self) -> usize {
         self.tiles.get_height()
+    }
+
+    pub fn get_tile(&self, x: usize, y: usize) -> Option<&T> {
+        if x < self.get_width() && y < self.get_height() {
+            self.tiles[(x, y)]
+        } else {
+            None
+        }
+    }
+
+    pub fn get_tile_with_vec(&self, pos: &Vec2<usize>) -> Option<&T> {
+        self.get_tile(pos.x, pos.y)
+    }
+
+    pub fn get_tile_with_tuple(&self, (x, y): (usize, usize)) -> Option<&T> {
+        self.get_tile(x,y)
     }
 
     pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Option<&mut T> {
@@ -26,6 +42,10 @@ impl<T> Level<T> {
 
     pub fn get_mut_tile_with_vec(&mut self, pos: &Vec2<usize>) -> Option<&mut T> {
         self.get_mut_tile(pos.x, pos.y)
+    }
+
+    pub fn get_mut_tile_with_tuple(&mut self, (x, y): (usize, usize)) -> Option<&mut T> {
+        self.get_mut_tile(x,y)
     }
 
     pub fn apply<F>(&mut self, gen: F) -> &mut Level<T> where F: FnOnce(&mut Level<T>) {
@@ -60,6 +80,7 @@ impl<T: Clone> Level<T> {
     }
 }
 
+<<<<<<< Updated upstream
 static NONE: &'static Option<()> = &None;
 
 impl<T> Index<(usize, usize)> for Level<T> {
@@ -86,11 +107,13 @@ impl<T> Index<Vec2<usize>> for Level<T> {
     }
 }
 
+=======
+>>>>>>> Stashed changes
 pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
-            if let Some(ref n) = level[(x,y)] {
+            if let Some(n) = level.get_tile(x, y) {
                 if let &Tile::Floor(_) = n {
                     if is_deadend(level, x, y) {
                         deadends.push((x,y));
@@ -119,7 +142,7 @@ pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
             _ => continue,
         };
 
-        if let Some(Tile::Floor(_)) = level[coord] {
+        if let Some(&Tile::Floor(_)) = level.get_tile_with_tuple(coord) {
             paths += 1;
         }
     }
