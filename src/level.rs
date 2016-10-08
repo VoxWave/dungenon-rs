@@ -80,35 +80,6 @@ impl<T: Clone> Level<T> {
     }
 }
 
-<<<<<<< Updated upstream
-static NONE: &'static Option<()> = &None;
-
-impl<T> Index<(usize, usize)> for Level<T> {
-    type Output= Option<T>;
-
-    fn index(&self, (x, y): (usize, usize)) -> &Option<T>{
-        if x < self.get_width() && y < self.get_height() {
-            &self.tiles[(x, y)]
-        } else {
-             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
-        }
-    }
-}
-
-impl<T> Index<Vec2<usize>> for Level<T> {
-    type Output= Option<T>;
-
-    fn index(&self, vec: Vec2<usize>) -> &Option<T>{
-        if vec.x < self.get_width() && vec.y < self.get_height() {
-            &self.tiles[(vec.x, vec.y)]
-        } else {
-             unsafe{&*(NONE as *const _ as *const _)} //delmas pointer magic
-        }
-    }
-}
-
-=======
->>>>>>> Stashed changes
 pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
