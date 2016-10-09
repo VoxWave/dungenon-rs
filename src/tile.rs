@@ -1,3 +1,5 @@
+use std::default::Default;
+
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 //the indexes inside the enums are for flexibility. You can create an extra array for different
 //types of particular tile type and index it with the index. For example you could have an array of
