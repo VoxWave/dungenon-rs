@@ -24,13 +24,14 @@ impl MazeGen {
     }
 
     pub fn generate(&mut self, level: &mut Level<Tile>) {
+        use util::Error;
         let mut stack: Vec<Vec2<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop: while let Some(cur) = stack.pop() {
             let neighbours = Self::get_neighbours(level, &cur);
             match level.get_mut_tile_with_vec(&cur) {
 
-                Some(tile) => {
+                Ok(tile) => {
                     match *tile {
                         Tile::Void(_) | Tile::Floor(_) => {continue 'mainloop},
                         _ => {},
@@ -47,7 +48,7 @@ impl MazeGen {
                     }
                 },
 
-                None => continue 'mainloop
+                Err(Error::IndexOutOfBounds) => continue 'mainloop
             }
 
         }
@@ -61,8 +62,8 @@ impl MazeGen {
             let dvec = d.get_vec();
             pos.x = (pos.x as isize + dvec.x) as usize;
             pos.y = (pos.y as isize + dvec.y) as usize;
-            match level[pos] {
-                Some(Tile::Floor(_)) => {
+            match level.get_tile_with_vec(&pos) {
+                Ok(&Tile::Floor(_)) => {
                     floors += 1;
                     if floors > 1 {
                         return None;

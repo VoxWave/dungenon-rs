@@ -1,6 +1,5 @@
 use tile::Tile;
 use util::{Grid, Error};
-use std::ops::{Index};
 use na::Vec2;
 use std::default::Default;
 
@@ -19,7 +18,7 @@ impl<T> Level<T> {
 
     pub fn get_tile(&self, x: usize, y: usize) -> Result<&T, Error> {
         if x < self.get_width() && y < self.get_height() {
-            Ok(self.tiles[(x, y)])
+            Ok(&self.tiles[(x, y)])
         } else {
             Err(Error::IndexOutOfBounds)
         }
@@ -35,7 +34,7 @@ impl<T> Level<T> {
 
     pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Result<&mut T, Error> {
         if x < self.get_width() && y < self.get_height() {
-            Ok(self.tiles[(x, y)].as_mut())
+            Ok(&mut self.tiles[(x, y)])
         } else {
             Err(Error::IndexOutOfBounds)
         }
