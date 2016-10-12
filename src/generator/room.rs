@@ -72,13 +72,14 @@ impl RoomGen {
     }
 
     fn carve(&self, level: &mut Level<Tile>) {
+        use util::Error;
         let room_distance = self.room_distance.clone();
         for room in &self.rooms {
             for y in room.min.y..room.max.y-room_distance+1 {
                 for x in room.min.x..room.max.x-room_distance+1 {
                     match level.get_mut_tile(x, y) {
-                        Some(tile) => *tile = Tile::Floor(0),
-                        None => {}
+                        Ok(tile) => *tile = Tile::Floor(0),
+                        Err(Error::IndexOutOfBounds) => {}
                     }
                 }
             }

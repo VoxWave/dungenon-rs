@@ -82,3 +82,7 @@ impl Direction {
 		&ORTHOGONAL
 	}
 }
+
+pub enum Error {
+    IndexOutOfBounds,
+}
