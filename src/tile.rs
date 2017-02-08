@@ -17,3 +17,9 @@ impl Default for Tile {
         Tile::Void(0)
     }
 }
+
+pub enum Faction {
+	Faction(usize),
+	Neutral,
+	Void,
+}
