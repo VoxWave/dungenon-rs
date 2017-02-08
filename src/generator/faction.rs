@@ -19,7 +19,9 @@ impl FactionGen {
 					Ok(tile) => {
 
 					},
-					Err(Error::IndexOutOfBounds) => panic!("");
+					Err(Error::IndexOutOfBounds) => {
+						panic!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
+					}
 				}
 			}
 		}
