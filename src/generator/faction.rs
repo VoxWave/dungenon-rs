@@ -17,7 +17,17 @@ impl FactionGen {
 			for y in 0..level.get_height() {
 				match level.get_mut_tile(x, y) {
 					Ok(tile) => {
-
+						let mut deck = Vec::new();
+						match *tile {
+							Faction::Faction(_) => {
+								deck.push(tile);
+							},
+							Faction::Void => continue,
+							_ => {},
+						}
+						get_faction_neighbours(&mut deck, &mut level);
+						self.rand.shuffle(deck);
+						*tile = deck.pop();
 					},
 					Err(Error::IndexOutOfBounds) => {
 						panic!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
