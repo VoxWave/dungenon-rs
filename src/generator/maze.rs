@@ -1,4 +1,4 @@
-use level::Level;
+use level::{add_isize_to_usize, Level};
 
 use na::Vec2;
 
@@ -58,11 +58,13 @@ impl MazeGen {
         let mut neighbours: Vec<Vec2<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
-            let mut pos = pos.clone();
+            let pos = pos.clone();
             let dvec = d.get_vec();
-            pos.x = (pos.x as isize + dvec.x) as usize;
-            pos.y = (pos.y as isize + dvec.y) as usize;
-            match level.get_tile_with_vec(&pos) {
+            let coord = match (add_isize_to_usize(dvec.x, pos.x), add_isize_to_usize(dvec.y, pos.y)) {
+                (Some(x), Some(y)) => (x,y),
+                _ => continue,
+            };
+            match level.get_tile_with_tuple(coord) {
                 Ok(&Tile::Floor(_)) => {
                     floors += 1;
                     if floors > 1 {

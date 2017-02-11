@@ -61,6 +61,7 @@ pub enum Direction {
 }
 
 static ORTHOGONAL: [Direction; 4] = [Direction::Up, Direction::Down, Direction::Left, Direction::Right];
+static ALL: [Direction; 8] = [Direction::Up, Direction::Down, Direction::Left, Direction::Right, Direction::Dl, Direction::Dr, Direction::Ul, Direction::Ur];
 
 impl Direction {
 	pub fn get_vec(&self) -> Vec2<isize> {
@@ -78,9 +79,26 @@ impl Direction {
 		vec
 	}
 
+    pub fn get_tuple(&self) -> (isize, isize) {
+        use self::Direction::*;
+        match *self {
+            Up => (0,1),
+			Down => (0,-1),
+			Left => (-1,0),
+			Right => (1,0),
+			Ur => (1,1),
+			Dr => (1,-1),
+			Dl => (-1,-1),
+			Ul => (-1,1),
+        }
+    }
+
 	pub fn get_orthogonal_dirs() -> &'static[Direction] {
 		&ORTHOGONAL
 	}
+    pub fn get_dirs() -> &'static[Direction] {
+        &ALL
+    }
 }
 
 pub enum Error {
