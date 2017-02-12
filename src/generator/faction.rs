@@ -41,10 +41,9 @@ impl FactionGen {
                     }
                 }
                 Self::get_faction_neighbours(x, y, &mut deck, level);
-                self.rand.shuffle(&mut deck);
-                match deck.pop() {
+                match self.rand.choose(&deck) {
                     Some(f) => {
-                        delta.push(((x,y), f));
+                        delta.push(((x,y), f.clone()));
                     },
                     None => continue,
                 }
