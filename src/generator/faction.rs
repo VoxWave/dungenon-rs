@@ -21,10 +21,10 @@ impl FactionGen {
     }
 
     pub fn generate(&mut self, level: &mut Level<Faction>) {
-        let mut delta = Vec::new();
+        let mut delta = Vec::with_capacity(level.get_width() * level.get_height());
         for x in 0..level.get_width() {
             for y in 0..level.get_height() {
-                let mut deck = Vec::new();
+                let mut deck = Vec::with_capacity(9);
                 match level.get_mut_tile(x, y) {
                     Ok(tile) => {
                         match *tile {
@@ -37,7 +37,7 @@ impl FactionGen {
 
                     },
                     Err(Error::IndexOutOfBounds) => {
-                        panic!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
+                        unreachable!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
                     }
                 }
                 Self::get_faction_neighbours(x, y, &mut deck, level);
