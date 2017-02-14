@@ -17,3 +17,16 @@ impl Default for Tile {
         Tile::Void(0)
     }
 }
+
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+pub enum Faction {
+	Faction(usize),
+	Neutral,
+	Void,
+}
+
+impl Default for Faction {
+    fn default() -> Faction {
+        Faction::Void
+    }
+}

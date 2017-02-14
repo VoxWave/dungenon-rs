@@ -120,7 +120,7 @@ pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
     paths < 2
 }
 
-fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
+pub fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
     if i < 0 && u != 0 {
         u -= (-i) as usize;
     } else if i >= 0 && u < usize::max_value() {
