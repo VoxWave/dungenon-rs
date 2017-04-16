@@ -31,42 +31,44 @@ impl FactionGen {
         let width = level.get_width();
         let height = level.get_height();
         let number = self.rand.next_u32();
-        let level_ref = &*level;
-        (0..width).into_par_iter()
-            .map(|x| (x, (0..height).into_par_iter()))
-            .flat_map(|(x, ys)| {
-                ys.flat_map(move |y| {
-                    let x_seed = (x as u64 ^ (x as u64 >> 32)) as u32;
-                    let y_seed = (y as u64 ^ (y as u64 >> 32)) as u32;
-                    let mut rand = XorShiftRng::from_seed([number, x_seed, y_seed, 1]);
-                    rand.next_u32();
-                    rand.next_u32();
-                    let mut deck = SmallVec::<[_; 9]>::new();
-                    match level_ref.get_tile(x, y) {
-                        Ok(tile) => {
-                            match *tile {
-                                Faction::Faction(_) => {
-                                    deck.push(tile.clone());
-                                },
-                                Faction::Void => return None,
-                                _ => {},
+        {
+            let level_ref = &*level;
+            (0..width).into_par_iter()
+                .map(|x| (x, (0..height).into_par_iter()))
+                .flat_map(|(x, ys)| {
+                    ys.flat_map(move |y| {
+                        let x_seed = (x as u64 ^ (x as u64 >> 32)) as u32;
+                        let y_seed = (y as u64 ^ (y as u64 >> 32)) as u32;
+                        let mut rand = XorShiftRng::from_seed([number, x_seed, y_seed, 1]);
+                        rand.next_u32();
+                        rand.next_u32();
+                        let mut deck = SmallVec::<[_; 9]>::new();
+                        match level_ref.get_tile(x, y) {
+                            Ok(tile) => {
+                                match *tile {
+                                    Faction::Faction(_) => {
+                                        deck.push(tile.clone());
+                                    },
+                                    Faction::Void => return None,
+                                    _ => {},
+                                }
+                            },
+                            Err(Error::IndexOutOfBounds) => {
+                                unreachable!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
                             }
-                        },
-                        Err(Error::IndexOutOfBounds) => {
-                            unreachable!("Generate method indexed out of bounds while simulating a step. This should never happen unless the programmer is not very bright.");
                         }
-                    }
-                    Self::get_faction_neighbours(x, y, &mut deck, level_ref);
-                    rand.choose(&deck)
-                        .map(|f| ((x, y), f.clone()))
+                        Self::get_faction_neighbours(x, y, &mut deck, level_ref);
+                        rand.choose(&deck)
+                            .map(|f| ((x, y), f.clone()))
+                    })
                 })
-            })
-            .for_each(|((x, y), f)| {
-                //this should be safe, right?
-                if let Ok(tile) = unsafe{ &mut *lovel.0 }.get_mut_tile(x, y) {
-                    *tile = f;
-                }
-            });
+                .for_each(|((x, y), f)| {
+                    //this should be safe, right?
+                    if let Ok(tile) = unsafe{ &mut *lovel.0 }.get_mut_tile(x, y) {
+                        *tile = f;
+                    }
+                });
+        }
         mem::swap(level, buffer);
     }
 
