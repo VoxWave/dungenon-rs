@@ -2,6 +2,7 @@ use std::ops::{Index, IndexMut};
 use std::default::Default;
 use na::Vec2;
 
+#[derive(Clone)]
 pub struct Grid<T> {
     data: Vec<T>,
     width: usize,

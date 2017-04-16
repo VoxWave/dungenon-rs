@@ -3,6 +3,7 @@ use util::{Grid, Error};
 use na::Vec2;
 use std::default::Default;
 
+#[derive(Clone)]
 pub struct Level<T> {
     tiles: Grid<T>,
 }
