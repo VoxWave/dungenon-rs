@@ -1,4 +1,4 @@
-use level::{add_isize_to_usize, Level};
+use level::{add_isize_to_usize, GridLevel};
 
 use na::Vec2;
 
@@ -23,7 +23,7 @@ impl MazeGen {
         }
     }
 
-    pub fn generate(&mut self, level: &mut Level<Tile>) {
+    pub fn generate(&mut self, level: &mut GridLevel<Tile>) {
         use util::Error;
         let mut stack: Vec<Vec2<usize>> = Vec::new();
         stack.push(self.pos);
@@ -54,7 +54,7 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(level: &Level<Tile>, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
+    fn get_neighbours(level: &GridLevel<Tile>, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
         let mut neighbours: Vec<Vec2<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
