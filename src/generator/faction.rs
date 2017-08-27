@@ -27,7 +27,7 @@ impl FactionGen {
     }
     #[inline]
     pub fn generate(&mut self, level: &mut GridLevel<Faction>, buffer: &mut GridLevel<Faction>) {
-        let mut lovel = SuperUnsafe(buffer as *mut GridLevel<Faction>);
+        let lovel = SuperUnsafe(buffer as *mut GridLevel<Faction>);
         let width = level.get_width();
         let height = level.get_height();
         let number = self.rand.next_u32();
