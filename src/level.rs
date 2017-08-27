@@ -4,11 +4,11 @@ use na::Vec2;
 use std::default::Default;
 
 #[derive(Clone)]
-pub struct Level<T> {
+pub struct GridLevel<T> {
     tiles: Grid<T>,
 }
 
-impl<T> Level<T> {
+impl<T> GridLevel<T> {
     pub fn get_width(&self) -> usize {
         self.tiles.get_width()
     }
@@ -49,14 +49,14 @@ impl<T> Level<T> {
         self.get_mut_tile(x,y)
     }
 
-    pub fn apply<F>(&mut self, gen: F) -> &mut Level<T> where F: FnOnce(&mut Level<T>) {
+    pub fn apply<F>(&mut self, gen: F) -> &mut GridLevel<T> where F: FnOnce(&mut GridLevel<T>) {
         gen(self);
         self
     }
 
 }
 
-impl<T: Default+Clone> Level<T> {
+impl<T: Default+Clone> GridLevel<T> {
     pub fn fill_with(&mut self, tile: T) {
         let width = self.tiles.get_width();
         let height = self.tiles.get_height();
@@ -68,20 +68,20 @@ impl<T: Default+Clone> Level<T> {
         }
     }
 
-    pub fn new(width: usize, height: usize) -> Level<T> {
-        Level{
+    pub fn new(width: usize, height: usize) -> GridLevel<T> {
+        GridLevel{
             tiles: Grid::new(width, height),
         }
     }
 
-    pub fn new_filled_with(tile: T, width: usize, height: usize) -> Level<T> {
-        Level{
+    pub fn new_filled_with(tile: T, width: usize, height: usize) -> GridLevel<T> {
+        GridLevel{
             tiles: Grid::new_filled_with(tile, width, height),
         }
     }
 }
 
-pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
+pub fn fill_dead_end_tiles(level: &mut GridLevel<Tile>) -> bool {
     let mut deadends = Vec::new();
     for y in 0..level.get_height() {
         for x in 0..level.get_width() {
@@ -104,7 +104,7 @@ pub fn fill_dead_end_tiles(level: &mut Level<Tile>) -> bool {
     filled_deadend
 }
 
-pub fn is_deadend(level: &Level<Tile>, x: usize, y: usize) -> bool {
+pub fn is_deadend(level: &GridLevel<Tile>, x: usize, y: usize) -> bool {
     use util::Direction;
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {

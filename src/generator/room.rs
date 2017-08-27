@@ -6,7 +6,7 @@ use na::Pnt2 as Point2;
 
 use tile::Tile;
 
-use level::Level;
+use level::GridLevel;
 
 pub struct RoomGen {
     rand_x: XorShiftRng,
@@ -31,7 +31,7 @@ impl RoomGen {
         }
     }
 
-    pub fn generate(&mut self, level: &mut Level<Tile>) {
+    pub fn generate(&mut self, level: &mut GridLevel<Tile>) {
         for _ in 0..self.attempts {
             let room = self.generate_box(level);
 
@@ -47,7 +47,7 @@ impl RoomGen {
         self.rooms = Vec::new();
     }
 
-    fn generate_box(&mut self, level: &mut Level<Tile>) -> Room {
+    fn generate_box(&mut self, level: &mut GridLevel<Tile>) -> Room {
         let min_range_x = Range::new(0, level.get_width());
         let min_range_y = Range::new(0, level.get_height());
         let min = Point2::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
@@ -71,7 +71,7 @@ impl RoomGen {
         false
     }
 
-    fn carve(&self, level: &mut Level<Tile>) {
+    fn carve(&self, level: &mut GridLevel<Tile>) {
         use util::Error;
         let room_distance = self.room_distance.clone();
         for room in &self.rooms {

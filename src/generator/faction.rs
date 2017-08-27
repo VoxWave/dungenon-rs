@@ -13,7 +13,7 @@ use tile::Faction;
 
 use util::{Error, Direction};
 
-use level::{Level, add_isize_to_usize};
+use level::{GridLevel, add_isize_to_usize};
 
 pub struct FactionGen {
     rand: XorShiftRng,
@@ -26,8 +26,8 @@ impl FactionGen {
         }
     }
     #[inline]
-    pub fn generate(&mut self, level: &mut Level<Faction>, buffer: &mut Level<Faction>) {
-        let mut lovel = SuperUnsafe(buffer as *mut Level<Faction>);
+    pub fn generate(&mut self, level: &mut GridLevel<Faction>, buffer: &mut GridLevel<Faction>) {
+        let lovel = SuperUnsafe(buffer as *mut GridLevel<Faction>);
         let width = level.get_width();
         let height = level.get_height();
         let number = self.rand.next_u32();
@@ -72,7 +72,7 @@ impl FactionGen {
         mem::swap(level, buffer);
     }
 
-    fn get_faction_neighbours(x: usize, y: usize, deck: &mut SmallVec<[Faction;9]>, level: &Level<Faction>) {
+    fn get_faction_neighbours(x: usize, y: usize, deck: &mut SmallVec<[Faction;9]>, level: &GridLevel<Faction>) {
         for d in Direction::get_dirs() {
             let (ix, iy) = d.get_tuple();
             let coord = match (add_isize_to_usize(ix, x), add_isize_to_usize(iy, y)) {
@@ -87,5 +87,5 @@ impl FactionGen {
     }
 }
 //this struct is unsafe. Use it with great caution.
-struct SuperUnsafe(*mut Level<Faction>);
+struct SuperUnsafe(*mut GridLevel<Faction>);
 unsafe impl Sync for SuperUnsafe{}
