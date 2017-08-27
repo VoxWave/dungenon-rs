@@ -73,7 +73,7 @@ impl MazeGen {
                 },
                 _ => {},
             }
-            neighbours.push(pos);
+            neighbours.push(Vec2::new(coord.0, coord.1));
         }
         Some(neighbours)
     }
