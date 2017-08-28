@@ -5,6 +5,6 @@ authors = ["VoxWave <victor_bankowski@hotmail.com>"]
 
 [dependencies]
 rand = "0.3.13"
-nalgebra = "0.5.1"
+nalgebra = "0.13"
 rayon = "0.7"
 smallvec = "0.3.3"
