@@ -1,6 +1,6 @@
 use tile::Tile;
 use util::{Grid, Error};
-use na::Vec2;
+use Vector;
 use std::default::Default;
 
 #[derive(Clone)]
@@ -25,7 +25,7 @@ impl<T> GridLevel<T> {
         }
     }
 
-    pub fn get_tile_with_vec(&self, pos: &Vec2<usize>) -> Result<&T, Error> {
+    pub fn get_tile_with_vec(&self, pos: &Vector<usize>) -> Result<&T, Error> {
         self.get_tile(pos.x, pos.y)
     }
 
@@ -41,7 +41,7 @@ impl<T> GridLevel<T> {
         }
     }
 
-    pub fn get_mut_tile_with_vec(&mut self, pos: &Vec2<usize>) -> Result<&mut T, Error> {
+    pub fn get_mut_tile_with_vec(&mut self, pos: &Vector<usize>) -> Result<&mut T, Error> {
         self.get_mut_tile(pos.x, pos.y)
     }
 

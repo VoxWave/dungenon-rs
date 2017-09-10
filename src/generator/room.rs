@@ -2,7 +2,7 @@ use rand::os::OsRng;
 use rand::{XorShiftRng, Rand};
 use rand::distributions::{IndependentSample, Range};
 
-use na::Pnt2 as Point2;
+use Point;
 
 use tile::Tile;
 
@@ -50,10 +50,10 @@ impl RoomGen {
     fn generate_box(&mut self, level: &mut GridLevel<Tile>) -> Room {
         let min_range_x = Range::new(0, level.get_width());
         let min_range_y = Range::new(0, level.get_height());
-        let min = Point2::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
+        let min = Point::new(min_range_x.ind_sample(&mut self.rand_x), min_range_y.ind_sample(&mut self.rand_y));
 
         let max_range = Range::new(self.min_room_size, self.max_room_size);
-        let mut max = Point2::new(max_range.ind_sample(&mut self.rand_x), max_range.ind_sample(&mut self.rand_y));
+        let mut max = Point::new(max_range.ind_sample(&mut self.rand_x), max_range.ind_sample(&mut self.rand_y));
         max.x += min.x;
         max.y += min.y;
         max.x += self.room_distance;
@@ -90,8 +90,8 @@ impl RoomGen {
 
 
 struct Room {
-    pub min: Point2<usize>,
-    pub max: Point2<usize>,
+    pub min: Point<usize>,
+    pub max: Point<usize>,
 }
 
 impl Room {

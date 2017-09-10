@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 use std::default::Default;
-use na::Vec2;
+use Vector;
 
 #[derive(Clone)]
 pub struct Grid<T> {
@@ -65,17 +65,17 @@ static ORTHOGONAL: [Direction; 4] = [Direction::Up, Direction::Down, Direction::
 static ALL: [Direction; 8] = [Direction::Up, Direction::Down, Direction::Left, Direction::Right, Direction::Dl, Direction::Dr, Direction::Ul, Direction::Ur];
 
 impl Direction {
-    pub fn get_vec(&self) -> Vec2<isize> {
+    pub fn get_vec(&self) -> Vector<isize> {
         use self::Direction::*;
         let vec = match *self {
-            Up => Vec2::new(0,1),
-            Down => Vec2::new(0,-1),
-            Left => Vec2::new(-1,0),
-            Right => Vec2::new(1,0),
-            Ur => Vec2::new(1,1),
-            Dr => Vec2::new(1,-1),
-            Dl => Vec2::new(-1,-1),
-            Ul => Vec2::new(-1,1),
+            Up => Vector::new(0,1),
+            Down => Vector::new(0,-1),
+            Left => Vector::new(-1,0),
+            Right => Vector::new(1,0),
+            Ur => Vector::new(1,1),
+            Dr => Vector::new(1,-1),
+            Dl => Vector::new(-1,-1),
+            Ul => Vector::new(-1,1),
         };
         vec
     }
