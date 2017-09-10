@@ -1,9 +1,9 @@
-mod dungeon;
-mod room;
-mod maze;
-mod faction;
+mod grid;
+mod unaligned;
 
-pub use self::maze::MazeGen;
-pub use self::dungeon::DungeonGen;
-pub use self::room::RoomGen;
-pub use self::faction::FactionGen;
+pub use self::grid::maze::MazeGen;
+pub use self::grid::dungeon::DungeonGen;
+pub use self::grid::room::RoomGen;
+pub use self::grid::faction::FactionGen;
+
+pub use self::unaligned::forest::generate_forest;

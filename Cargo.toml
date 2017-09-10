@@ -4,7 +4,8 @@ version = "0.4.0"
 authors = ["VoxWave <victor_bankowski@hotmail.com>"]
 
 [dependencies]
-rand = "0.3.13"
+rand = "0.3"
 nalgebra = "0.13"
-rayon = "0.7"
-smallvec = "0.3.3"
+rayon = "0.8"
+smallvec = "0.3"
+poisson = "0.8"
