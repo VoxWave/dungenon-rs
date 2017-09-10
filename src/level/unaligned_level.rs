@@ -1,6 +1,13 @@
-pub struct UnalignedLevel {
-    objects: Vec<Object>,
+pub struct UnalignedLevel<T> {
+    objects: Vec<Object<T>>,
 }
 
-struct Object {
+pub struct Object<T> {
+    value: T,
+    hitbox: HitBox,
+}
+
+pub enum Hitbox {
+    Circle(Vector, f32),
+    Aabb(Vector, Vector),
 }

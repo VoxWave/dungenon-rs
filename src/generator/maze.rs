@@ -1,6 +1,6 @@
 use level::{add_isize_to_usize, GridLevel};
 
-use na::Vec2;
+use Vector;
 
 use rand::os::OsRng;
 use rand::XorShiftRng;
@@ -11,21 +11,21 @@ use tile::Tile;
 use util::{Direction};
 
 pub struct MazeGen {
-    pub pos: Vec2<usize>,
+    pub pos: Vector<usize>,
     rand: XorShiftRng,
 }
 
 impl MazeGen {
     pub fn new(x: usize, y: usize) -> MazeGen {
         MazeGen{
-            pos: Vec2::new(x,y),
+            pos: Vector::new(x,y),
             rand: XorShiftRng::rand(&mut OsRng::new().unwrap()),
         }
     }
 
     pub fn generate(&mut self, level: &mut GridLevel<Tile>) {
         use util::Error;
-        let mut stack: Vec<Vec2<usize>> = Vec::new();
+        let mut stack: Vec<Vector<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop: while let Some(cur) = stack.pop() {
             let neighbours = Self::get_neighbours(level, &cur);
@@ -54,8 +54,8 @@ impl MazeGen {
         }
     }
 
-    fn get_neighbours(level: &GridLevel<Tile>, pos: &Vec2<usize>) -> Option<Vec<Vec2<usize>>> {
-        let mut neighbours: Vec<Vec2<usize>> = Vec::new();
+    fn get_neighbours(level: &GridLevel<Tile>, pos: &Vector<usize>) -> Option<Vec<Vector<usize>>> {
+        let mut neighbours: Vec<Vector<usize>> = Vec::new();
         let mut floors = 0;
         for d in Direction::get_orthogonal_dirs() {
             let pos = pos.clone();
