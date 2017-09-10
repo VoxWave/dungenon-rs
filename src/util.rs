@@ -66,18 +66,8 @@ static ALL: [Direction; 8] = [Direction::Up, Direction::Down, Direction::Left, D
 
 impl Direction {
     pub fn get_vec(&self) -> Vector<isize> {
-        use self::Direction::*;
-        let vec = match *self {
-            Up => Vector::new(0,1),
-            Down => Vector::new(0,-1),
-            Left => Vector::new(-1,0),
-            Right => Vector::new(1,0),
-            Ur => Vector::new(1,1),
-            Dr => Vector::new(1,-1),
-            Dl => Vector::new(-1,-1),
-            Ul => Vector::new(-1,1),
-        };
-        vec
+        let (x, y) = self.get_tuple();
+        Vector::new(x, y)
     }
 
     pub fn get_tuple(&self) -> (isize, isize) {
