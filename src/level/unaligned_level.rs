@@ -1,6 +1,8 @@
 use {Vector, Point};
 
-use rayon::iter::{ParallelIterator, IntoParallelIterator};
+use na::zero;
+
+use rayon::iter::{ParallelIterator};
 use rayon::prelude::*;
 
 pub struct UnalignedLevel<T> {
@@ -20,7 +22,7 @@ impl<T> UnalignedLevel<T> {
     }
 }
 
-impl<T: Send> UnalignedLevel<T> {
+impl<T: Sync> UnalignedLevel<T> {
     
     ///Adds an `Object` to the level if it doesn't collide with other objects
     pub fn add(&mut self, obj: Object<T>) -> bool {
@@ -39,10 +41,17 @@ impl<T: Send> UnalignedLevel<T> {
 } 
 
 pub struct Object<T> {
-    value: T,
-    hitbox: Hitbox,
+    pub value: T,
+    pub hitbox: Hitbox,
 }
 impl<T> Object<T> {
+    pub fn new(value: T, hitbox: Hitbox) -> Self {
+        Object{
+            value,
+            hitbox,
+        }
+    }
+
     pub fn collides(&self, hitbox: &Hitbox) -> bool {
         self.hitbox.collides(hitbox)
     }
@@ -50,6 +59,7 @@ impl<T> Object<T> {
 
 pub enum Hitbox {
     Circle(Vector<f32>, f32),
+    ///First vector denotes the center of the AABB and the second vector denotes the dimensions(width, height) of the AABB
     Aabb(Vector<f32>, Vector<f32>),
 }
 impl Hitbox {
@@ -65,7 +75,10 @@ impl Hitbox {
                 let height = a_sides.y.abs() / 2.;
                 let aabb_center = *a_lpos;
                 let circle_center = *c_lpos;
-                let ca = (aabb_center - circle_center).normalize();
+                let mut ca = aabb_center - circle_center;
+                if ca != zero() {
+                    ca = ca.normalize();
+                }
                 let outer = circle_center + *c_radius * ca;
                 point_in_aabb(Point::from_coordinates(outer), (Point::from_coordinates(aabb_center), width, height))
             },

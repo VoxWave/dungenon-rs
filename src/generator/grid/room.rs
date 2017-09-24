@@ -96,13 +96,9 @@ struct Room {
 
 impl Room {
     pub fn overlaps(&self, room: &Room) -> bool {
-        if self.min.x > room.max.x || room.min.x > self.max.x {
-            return false;
-        }
-
-        if self.min.y > room.max.y || room.min.y > self.max.y {
-            return false;
-        }
-        true
+        self.min.x <= room.max.x && 
+        room.min.x <= self.max.x && 
+        self.min.y <= room.max.y && 
+        room.min.y <= self.max.y
     }
 }

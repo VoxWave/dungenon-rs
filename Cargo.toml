@@ -8,4 +8,7 @@ rand = "0.3"
 nalgebra = "0.13"
 rayon = "0.8"
 smallvec = "0.3"
-poisson = "0.8"
+poisson = "0.9"
+
+# [dependencies.poisson]
+# git = "https://github.com/WaDelma/poisson.git"
