@@ -41,6 +41,14 @@ fn aabb_aabb_collision() {
 }
 
 #[test]
+fn crossing_aabb_aabb_collision() {
+    let aabb1 = Hitbox::Aabb(Vector::new(0.0, 0.0), Vector::new(10., 1.));
+    let aabb2 = Hitbox::Aabb(Vector::new(0.0, 0.0), Vector::new(1., 10.));
+    assert!(aabb1.collides(&aabb2));
+    assert!(aabb2.collides(&aabb1));
+}
+
+#[test]
 fn circle_aabb_collision() {
     let aabb1 = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let circle1 = Hitbox::Circle(Vector::new(0., 0.), 1.);
@@ -62,4 +70,76 @@ fn circle_aabb_collision() {
 
     assert!(circle2.collides(&aabb2));
     assert!(aabb2.collides(&circle2));
+}
+
+#[test]
+fn rectangle_circle_inside() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(0.5, 0.5), 0.5);
+
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_really_distant() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(100.,100.), 1.);
+
+    assert!(!rectangle.collides(&circle));
+    assert!(!circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_right_side_touching() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(2.,1.), 1.);
+    
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_left_side_touching() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(-2.,1.), 1.);
+
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_up_side_touching() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(0. ,3.), 1.);
+
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_rectangle_down_side_touching() {
+    let rectangle = Hitbox::Rectangle(Vector::new(0.,0.), Vector::new(1.,1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(0., -1.), 1.);
+
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_close_to_side() {
+    let rectangle = Hitbox::Rectangle(Vector::new(1.,-1.), Vector::new(2.,-1.), 2.);
+    let circle = Hitbox::Circle(Vector::new(0., 0.), 1.);
+
+    assert!(rectangle.collides(&circle));
+    assert!(circle.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_circle_close_to_side_not_touching() {
+    let rectangle = Hitbox::Rectangle(Vector::new(1.001,-1.), Vector::new(2.,-1.), 2.);
+    let circle = Hitbox::Circle(Vector::new(0., 0.), 1.);
+
+    assert!(!rectangle.collides(&circle));
+    assert!(!circle.collides(&rectangle));
 }

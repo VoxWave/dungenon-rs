@@ -1,6 +1,8 @@
 use {Vector, Point};
 
 use na::zero;
+use na::geometry::Rotation2;
+use alga::linear::Transformation;
 
 use rayon::iter::{ParallelIterator};
 use rayon::prelude::*;
@@ -56,11 +58,12 @@ impl<T> Object<T> {
         self.hitbox.collides(hitbox)
     }
 }
-
+#[derive(Debug)]
 pub enum Hitbox {
     Circle(Vector<f32>, f32),
     ///First vector denotes the center of the AABB and the second vector denotes the dimensions(width, height) of the AABB
     Aabb(Vector<f32>, Vector<f32>),
+    Rectangle(Vector<f32>, Vector<f32>, f32),
 }
 impl Hitbox {
     pub fn collides(&self, hitbox: &Hitbox) -> bool {
@@ -82,6 +85,21 @@ impl Hitbox {
                 let outer = circle_center + *c_radius * ca;
                 point_in_aabb(Point::from_coordinates(outer), (Point::from_coordinates(aabb_center), width, height))
             },
+            (&Circle(ref c_lpos, ref c_radius), &Rectangle(ref r_spos, ref r_epos, ref r_height)) |
+            (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Circle(ref c_lpos, ref c_radius)) => {
+                let rotation = Rotation2::rotation_between(&(r_epos-r_spos),&Vector::new(1.,0.));
+                let rot_circle = rotation.transform_vector(&(c_lpos-r_spos));
+                let aabb_width = (r_epos-r_spos).norm();
+                let aabb_center = Vector::new(aabb_width/2., r_height/2.);
+                let aabb = Aabb(aabb_center, Vector::new(aabb_width, *r_height));
+                Hitbox::collides(&aabb, &Circle(rot_circle, *c_radius))
+            },
+
+            (&Aabb(ref aabb_pos, ref aabb_sides), &Rectangle(ref r_spos, ref r_epos, ref r_height)) |
+            (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Aabb(ref aabb_pos, ref aabb_sides)) => {
+                
+            },
+
             (&Aabb(ref a1_lpos, ref a1_sides), &Aabb(ref a2_lpos, ref a2_sides)) => {
                 let a1_center = *a1_lpos;
                 let a2_center = *a2_lpos;
@@ -94,6 +112,8 @@ impl Hitbox {
                 (a1_center.y - a1_height) <= (a2_center.y + a2_height) &&
                 (a1_center.y + a1_height) >= (a2_center.y - a2_height)
             },
+
+            _ => unimplemented!(),
         }
     }
 }

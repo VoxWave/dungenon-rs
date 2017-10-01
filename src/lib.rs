@@ -1,4 +1,5 @@
 extern crate nalgebra as na;
+extern crate alga;
 extern crate rand;
 extern crate rayon;
 extern crate smallvec;
