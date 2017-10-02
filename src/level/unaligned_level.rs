@@ -97,6 +97,29 @@ impl Hitbox {
 
             (&Aabb(ref aabb_pos, ref aabb_sides), &Rectangle(ref r_spos, ref r_epos, ref r_height)) |
             (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Aabb(ref aabb_pos, ref aabb_sides)) => {
+                //TODO: slope breaks when vertical
+                let slope = (r_epos.y - r_spos.y)/(r_epos.x - r_spos.x);
+                let left_epos = Vector::new(r_spos.y-r_epos.y, r_epos.x-r_spos.x).normalize()* *r_height;
+                let aabb_left = aabb_pos.x - aabb_sides.x/2.;
+                let aabb_left_rectangle_bottom_intersect = (aabb_left - r_spos.x)*slope+r_spos.y;
+                let aabb_left_rectangle_top_intersect = (aabb_left - (r_spos.x + left_epos.x))*slope+r_spos.y+left_epos.y;
+                //TODO: slope2 breaks when vertical
+                let slope_2 = (left_epos.y - r_spos.y)/(left_epos.x - r_spos.x);
+                let aabb_left_rectangle_left_intersect = (aabb_left - r_spos.x)*slope_2+r_spos.y;
+                let aabb_left_rectangle_right_intersect = (aabb_left - (r_spos.x + r_epos.x))*slope_2+r_spos.y+r_epos.y;
+                let aabb_bottom = aabb_pos.y - aabb_sides.y/2.;
+                let aabb_top = aabb_pos.y + aabb_sides.y/2.;
+                if aabb_left_rectangle_bottom_intersect >= aabb_bottom && aabb_left_rectangle_bottom_intersect <= aabb_top {
+                    true
+                } else if aabb_left_rectangle_top_intersect >= aabb_bottom && aabb_left_rectangle_top_intersect <= aabb_top {
+                    true
+                } else if aabb_left_rectangle_left_intersect >= aabb_bottom && aabb_left_rectangle_left_intersect <= aabb_top {
+                    true
+                } else if aabb_left_rectangle_right_intersect >= aabb_bottom && aabb_left_rectangle_right_intersect <= aabb_top {
+                    true
+                } else {
+                    false
+                }
                 
             },
 

@@ -143,3 +143,40 @@ fn rectangle_circle_close_to_side_not_touching() {
     assert!(!rectangle.collides(&circle));
     assert!(!circle.collides(&rectangle));
 }
+
+#[test]
+#[ignore]
+fn rectangle_aabb_partial_overlap() {
+    let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
+    let rectangle = Hitbox::Rectangle(Vector::new(-1., -1.), Vector::new(0.5, 0.), 1.);
+    
+    assert!(rectangle.collides(&aabb));
+    assert!(aabb.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_aabb_left() {
+    let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
+    let rectangle = Hitbox::Rectangle(Vector::new(-1., -1.), Vector::new(-0.4, 0.), 1.);
+    
+    assert!(rectangle.collides(&aabb));
+    assert!(aabb.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_aabb_above_left() {
+    let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
+    let rectangle = Hitbox::Rectangle(Vector::new(-1., -1.), Vector::new(0., 3.), 1.);
+    
+    assert!(!rectangle.collides(&aabb));
+    assert!(!aabb.collides(&rectangle));
+}
+
+#[test]
+fn rectangle_aabb_below() {
+    let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
+    let rectangle = Hitbox::Rectangle(Vector::new(-4., -4.), Vector::new(1., -4.), 0.2);
+    
+    assert!(!rectangle.collides(&aabb));
+    assert!(!aabb.collides(&rectangle));
+}
