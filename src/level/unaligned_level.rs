@@ -64,6 +64,8 @@ pub enum Hitbox {
     ///First vector denotes the center of the AABB and the second vector denotes the dimensions(width, height) of the AABB
     Aabb(Vector<f32>, Vector<f32>),
     Rectangle(Vector<f32>, Vector<f32>, f32),
+    Line(Point<f32>, Vector<f32>),
+    LineSegment(Point<f32>, Point<f32>),
 }
 impl Hitbox {
     pub fn collides(&self, hitbox: &Hitbox) -> bool {
@@ -136,8 +138,36 @@ impl Hitbox {
                 (a1_center.y + a1_height) >= (a2_center.y - a2_height)
             },
 
+            (&Line(ref p1, ref v1), &Line(ref p2, ref v2)) => {
+                match line_line_intersection_point(p1, v1, p2, v2) {
+                    Ok(_) => true,
+                    Err(LineIntersectError::Infinite) => true,
+                    Err(LineIntersectError::NoCollision) => false,
+                }
+            },
+
             _ => unimplemented!(),
         }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum LineIntersectError {
+    Infinite, NoCollision,
+}
+
+pub fn line_line_intersection_point(p1: &Point<f32>, v1: &Vector<f32>, p2: &Point<f32>, v2: &Vector<f32>) -> Result<Point<f32>, LineIntersectError> {
+    let denominator_det = (v1.x*(-v2.y)) - ((-v2.x)* v1.y);
+    let numerator_det = ((p2.x - p1.x)*(-v2.y)) - ((-v2.x)* (p2.y - p1.y));
+    if denominator_det == 0. {
+        if numerator_det == 0. {
+            Err(LineIntersectError::Infinite)
+        } else {
+            Err(LineIntersectError::NoCollision)
+        }
+    } else {
+        let x = numerator_det/denominator_det;
+        Ok(p1 + (v1*x))
     }
 }
 
