@@ -145,6 +145,20 @@ impl Hitbox {
                     Err(LineIntersectError::NoCollision) => false,
                 }
             },
+            (&LineSegment(ref a1, ref a2), &LineSegment(ref b1, ref b2)) => {
+                let dir_vec1 = a2 - a1;
+                match line_line_intersection_point(a1, &(a2 - a1), b1, &(b2 - b1)) {
+                    Ok(p) => {
+                        
+                    },
+                    Err(LineIntersectError::Infinite) {
+                        false
+                    },
+                    Err(LineIntersectError::NoCollision) {
+                        false
+                    },
+                }
+            },
 
             _ => unimplemented!(),
         }
