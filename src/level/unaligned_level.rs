@@ -146,15 +146,32 @@ impl Hitbox {
                 }
             },
             (&LineSegment(ref a1, ref a2), &LineSegment(ref b1, ref b2)) => {
-                let dir_vec1 = a2 - a1;
                 match line_line_intersection_point(a1, &(a2 - a1), b1, &(b2 - b1)) {
                     Ok(p) => {
-                        
+                        p.x >= a1.x.min(a2.x) &&
+                        p.x <= a1.x.max(a2.x) &&
+                        p.y >= a1.y.min(a2.y) &&
+                        p.y <= a1.y.max(a2.y)
                     },
-                    Err(LineIntersectError::Infinite) {
-                        false
+                    Err(LineIntersectError::Infinite) => {
+                        b1.x >= a1.x.min(a2.x) &&
+                        b1.x <= a1.x.max(a2.x) &&
+                        b1.y >= a1.y.min(a2.y) &&
+                        b1.y <= a1.y.max(a2.y) ||
+                        b2.x >= a1.x.min(a2.x) &&
+                        b2.x <= a1.x.max(a2.x) &&
+                        b2.y >= a1.y.min(a2.y) &&
+                        b2.y <= a1.y.max(a2.y) ||
+                        a1.x >= b1.x.min(b2.x) &&
+                        a1.x <= b1.x.max(b2.x) &&
+                        a1.y >= b1.y.min(b2.y) &&
+                        a1.y <= b1.y.max(b2.y) ||
+                        a1.x >= b1.x.min(b2.x) &&
+                        a1.x <= b1.x.max(b2.x) &&
+                        a1.y >= b1.y.min(b2.y) &&
+                        a1.y <= b1.y.max(b2.y)
                     },
-                    Err(LineIntersectError::NoCollision) {
+                    Err(LineIntersectError::NoCollision) => {
                         false
                     },
                 }
