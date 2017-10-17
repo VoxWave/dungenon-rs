@@ -243,3 +243,62 @@ fn lines_equal() {
     assert!(line1.collides(&line2));
     assert!(line2.collides(&line1));
 }
+#[test]
+fn line_segment_intersection() {
+    let ls1 = Hitbox::LineSegment(Point::new(-1., 0.), Point::new(1., 0.));
+    let ls2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0., 1.)); 
+    let ls1_2 = Hitbox::LineSegment(Point::new(1., 0.), Point::new(-1., 0.));
+    let ls2_2 = Hitbox::LineSegment(Point::new(0., 1.), Point::new(0., -1.));
+    assert!(ls1.collides(&ls1));
+    assert!(ls1.collides(&ls2));
+    assert!(ls1.collides(&ls1_2));
+    assert!(ls1.collides(&ls2_2));
+    
+    assert!(ls2.collides(&ls1));
+    assert!(ls2.collides(&ls2));
+    assert!(ls2.collides(&ls1_2));
+    assert!(ls2.collides(&ls2_2));
+
+    assert!(ls1_2.collides(&ls1));
+    assert!(ls1_2.collides(&ls2));
+    assert!(ls1_2.collides(&ls1_2));
+    assert!(ls1_2.collides(&ls2_2));
+
+    assert!(ls2_2.collides(&ls1));
+    assert!(ls2_2.collides(&ls2));
+    assert!(ls2_2.collides(&ls1_2));
+    assert!(ls2_2.collides(&ls2_2));
+}
+
+#[test]
+fn line_segment_no_intersections() {
+    let ls1 = Hitbox::LineSegment(Point::new(-1., 0.), Point::new(1., 0.));
+    let ls2 = Hitbox::LineSegment(Point::new(1., 0.), Point::new(-1., 0.));
+    let lsabove = Hitbox::LineSegment(Point::new(0., 2.), Point::new(0., 1.));
+    let lsbelow = Hitbox::LineSegment(Point::new(0.5, -2.), Point::new(0., -1.));
+    let lsabove_2 = Hitbox::LineSegment(Point::new(0., 1.), Point::new(0., 2.));
+    let lsbelow_2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0.5, -2.));
+
+    assert!(!ls1.collides(&lsabove));
+    assert!(!lsabove.collides(&ls1));
+    assert!(!ls1.collides(&lsbelow));
+    assert!(!lsbelow.collides(&ls1));
+    assert!(!ls1.collides(&lsabove_2));
+    assert!(!lsabove_2.collides(&ls1));
+    assert!(!ls1.collides(&lsbelow_2));
+    assert!(!lsbelow_2.collides(&ls1));
+
+    assert!(!ls2.collides(&lsabove));
+    assert!(!lsabove.collides(&ls2));
+    assert!(!ls2.collides(&lsbelow));
+    assert!(!lsbelow.collides(&ls2));
+    assert!(!ls2.collides(&lsabove_2));
+    assert!(!lsabove_2.collides(&ls2));
+    assert!(!ls2.collides(&lsbelow_2));
+    assert!(!lsbelow_2.collides(&ls2));
+
+    let left_to_ls1 =
+    let right_to_ls1 = 
+    let left_to_ls1_2 =
+    let right_to_ls1_2 =
+}

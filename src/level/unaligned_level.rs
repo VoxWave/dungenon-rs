@@ -151,21 +151,28 @@ impl Hitbox {
                         p.x >= a1.x.min(a2.x) &&
                         p.x <= a1.x.max(a2.x) &&
                         p.y >= a1.y.min(a2.y) &&
-                        p.y <= a1.y.max(a2.y)
+                        p.y <= a1.y.max(a2.y) &&
+                        p.x >= b1.x.min(b2.x) &&
+                        p.x <= b1.x.max(b2.x) &&
+                        p.y >= b1.y.min(b2.y) &&
+                        p.y <= b1.y.max(b2.y)
                     },
                     Err(LineIntersectError::Infinite) => {
                         b1.x >= a1.x.min(a2.x) &&
                         b1.x <= a1.x.max(a2.x) &&
                         b1.y >= a1.y.min(a2.y) &&
                         b1.y <= a1.y.max(a2.y) ||
+
                         b2.x >= a1.x.min(a2.x) &&
                         b2.x <= a1.x.max(a2.x) &&
                         b2.y >= a1.y.min(a2.y) &&
                         b2.y <= a1.y.max(a2.y) ||
+
                         a1.x >= b1.x.min(b2.x) &&
                         a1.x <= b1.x.max(b2.x) &&
                         a1.y >= b1.y.min(b2.y) &&
                         a1.y <= b1.y.max(b2.y) ||
+
                         a1.x >= b1.x.min(b2.x) &&
                         a1.x <= b1.x.max(b2.x) &&
                         a1.y >= b1.y.min(b2.y) &&
