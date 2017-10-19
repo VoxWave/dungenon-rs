@@ -44,7 +44,7 @@ fn main() {
     populate_level(&mut level, index);
     let mut factiongen = FactionGen::new();
     println!("How many iterations");
-    let iterations = u64_from_cmd();
+    let iterations = usize_from_cmd();
     let mut buffer = level.clone();
     for i in 0..iterations {
         factiongen.generate(&mut level, &mut buffer);
@@ -84,10 +84,10 @@ fn faction_png_export(name: String, colors: &HashMap<Faction, Rgb<u8>>, level: &
 fn faction_to_color(colors: &HashMap<Faction, Rgb<u8>>, tile: &Result<&Faction, Error>) -> Rgb<u8> {
     match *tile {
         Ok(ref tile) => {
-                match colors.get(tile) {
-                    Some(color) => color.clone(),
-                    None => Rgb([0u8, 0u8, 0u8]),
-                }
+            match colors.get(tile) {
+                Some(color) => color.clone(),
+                None => unreachable!("aaaaa!!!"),
+            }
         },
         Err(Error::IndexOutOfBounds) => panic!("Tile png import failed. Level indexing went out of bounds."),
     }
@@ -100,17 +100,6 @@ fn usize_from_cmd() -> usize {
         .expect("failed to read line");
 
     let num: usize = num.trim().parse()
-        .expect("Please type a number!");
-    num
-}
-
-fn u64_from_cmd() -> u64 {
-    let mut num = String::new();
-
-    io::stdin().read_line(&mut num)
-        .expect("failed to read line");
-
-    let num: u64 = num.trim().parse()
         .expect("Please type a number!");
     num
 }
