@@ -12,3 +12,6 @@ poisson = "0.9"
 
 # [dependencies.poisson]
 # git = "https://github.com/WaDelma/poisson.git"
+
+[workspace]
+members = ["demos/pinter"]
