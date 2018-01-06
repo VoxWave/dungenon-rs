@@ -2,20 +2,28 @@ use {Vector, Point};
 use super::Hitbox;
 use super::unaligned_level::{line_line_intersection_point, LineIntersectError};
 
+fn assert_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
+    assert!(hitbox1.collides(hitbox1));
+    assert!(hitbox2.collides(hitbox2));
+    assert!(hitbox1.collides(hitbox2));
+    assert!(hitbox2.collides(hitbox1));
+}
+
+fn assert_not_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
+    assert!(!hitbox1.collides(hitbox2));
+    assert!(!hitbox2.collides(hitbox1));
+}
+
 #[test]
 fn circle_circle_collision() {
-
     let circle1 = Hitbox::Circle(Vector::new(0., 0.), 1.);
     let circle2 = Hitbox::Circle(Vector::new(1.9, 0.), 1.);
     let circle3 = Hitbox::Circle(Vector::new(2.,2.), 1.);
 
-    assert!(circle1.collides(&circle2));
-    assert!(circle2.collides(&circle1));
+    assert_collides(&circle1, &circle2);
     
-    assert!(!circle3.collides(&circle1));
-    assert!(!circle3.collides(&circle2));
-    assert!(!circle1.collides(&circle3));
-    assert!(!circle2.collides(&circle3));
+    assert_not_collides(&circle1, &circle3);
+    assert_not_collides(&circle2, &circle3);
 }
 
 #[test]
@@ -25,20 +33,13 @@ fn aabb_aabb_collision() {
     let aabb3 = Hitbox::Aabb(Vector::new(1.6, 2.6), Vector::new(1., 2.));
     let aabb4 = Hitbox::Aabb(Vector::new(50., 50.), Vector::new(100., 150.));
 
-    assert!(aabb1.collides(&aabb2));
-    assert!(aabb2.collides(&aabb1));
+    assert_collides(&aabb1, &aabb2);
+    assert_collides(&aabb1, &aabb4);
+    assert_collides(&aabb2, &aabb4);
+    assert_collides(&aabb3, &aabb4);
 
-    assert!(!aabb3.collides(&aabb1));
-    assert!(!aabb3.collides(&aabb2));
-    assert!(!aabb1.collides(&aabb3));
-    assert!(!aabb2.collides(&aabb3));
-
-    assert!(aabb4.collides(&aabb1));
-    assert!(aabb1.collides(&aabb4));
-    assert!(aabb4.collides(&aabb2));
-    assert!(aabb2.collides(&aabb4));
-    assert!(aabb4.collides(&aabb3));
-    assert!(aabb3.collides(&aabb4));
+    assert_not_collides(&aabb1, &aabb3);
+    assert_not_collides(&aabb2, &aabb3);
 }
 
 #[test]
@@ -56,21 +57,13 @@ fn circle_aabb_collision() {
     let aabb2 = Hitbox::Aabb(Vector::new(2., 2.), Vector::new(1., 1.));
     let circle2 = Hitbox::Circle(Vector::new(2., 2.), 1.);
 
-    assert!(aabb1.collides(&circle1));
-    assert!(circle1.collides(&aabb1));
+    assert_collides(&aabb1, &circle1);
+    assert_collides(&aabb2, &circle2);
 
-    assert!(!aabb2.collides(&aabb1));
-    assert!(!aabb2.collides(&circle1));
-    assert!(!aabb1.collides(&aabb2));
-    assert!(!circle1.collides(&aabb2));
-
-    assert!(!circle2.collides(&aabb1));
-    assert!(!circle2.collides(&circle1));
-    assert!(!aabb1.collides(&circle2));
-    assert!(!circle1.collides(&circle2));
-
-    assert!(circle2.collides(&aabb2));
-    assert!(aabb2.collides(&circle2));
+    assert_not_collides(&aabb1, &aabb2);
+    assert_not_collides(&aabb2, &circle1);
+    assert_not_collides(&circle2, &aabb1);
+    assert_not_collides(&circle2, &circle1);
 }
 
 #[test]
@@ -270,35 +263,35 @@ fn line_segment_intersection() {
     assert!(ls2_2.collides(&ls2_2));
 }
 
-#[test]
-fn line_segment_no_intersections() {
-    let ls1 = Hitbox::LineSegment(Point::new(-1., 0.), Point::new(1., 0.));
-    let ls2 = Hitbox::LineSegment(Point::new(1., 0.), Point::new(-1., 0.));
-    let lsabove = Hitbox::LineSegment(Point::new(0., 2.), Point::new(0., 1.));
-    let lsbelow = Hitbox::LineSegment(Point::new(0.5, -2.), Point::new(0., -1.));
-    let lsabove_2 = Hitbox::LineSegment(Point::new(0., 1.), Point::new(0., 2.));
-    let lsbelow_2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0.5, -2.));
+// #[test]
+// fn line_segment_no_intersections() {
+//     let ls1 = Hitbox::LineSegment(Point::new(-1., 0.), Point::new(1., 0.));
+//     let ls2 = Hitbox::LineSegment(Point::new(1., 0.), Point::new(-1., 0.));
+//     let lsabove = Hitbox::LineSegment(Point::new(0., 2.), Point::new(0., 1.));
+//     let lsbelow = Hitbox::LineSegment(Point::new(0.5, -2.), Point::new(0., -1.));
+//     let lsabove_2 = Hitbox::LineSegment(Point::new(0., 1.), Point::new(0., 2.));
+//     let lsbelow_2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0.5, -2.));
 
-    assert!(!ls1.collides(&lsabove));
-    assert!(!lsabove.collides(&ls1));
-    assert!(!ls1.collides(&lsbelow));
-    assert!(!lsbelow.collides(&ls1));
-    assert!(!ls1.collides(&lsabove_2));
-    assert!(!lsabove_2.collides(&ls1));
-    assert!(!ls1.collides(&lsbelow_2));
-    assert!(!lsbelow_2.collides(&ls1));
+//     assert!(!ls1.collides(&lsabove));
+//     assert!(!lsabove.collides(&ls1));
+//     assert!(!ls1.collides(&lsbelow));
+//     assert!(!lsbelow.collides(&ls1));
+//     assert!(!ls1.collides(&lsabove_2));
+//     assert!(!lsabove_2.collides(&ls1));
+//     assert!(!ls1.collides(&lsbelow_2));
+//     assert!(!lsbelow_2.collides(&ls1));
 
-    assert!(!ls2.collides(&lsabove));
-    assert!(!lsabove.collides(&ls2));
-    assert!(!ls2.collides(&lsbelow));
-    assert!(!lsbelow.collides(&ls2));
-    assert!(!ls2.collides(&lsabove_2));
-    assert!(!lsabove_2.collides(&ls2));
-    assert!(!ls2.collides(&lsbelow_2));
-    assert!(!lsbelow_2.collides(&ls2));
+//     assert!(!ls2.collides(&lsabove));
+//     assert!(!lsabove.collides(&ls2));
+//     assert!(!ls2.collides(&lsbelow));
+//     assert!(!lsbelow.collides(&ls2));
+//     assert!(!ls2.collides(&lsabove_2));
+//     assert!(!lsabove_2.collides(&ls2));
+//     assert!(!ls2.collides(&lsbelow_2));
+//     assert!(!lsbelow_2.collides(&ls2));
 
-    let left_to_ls1 =
-    let right_to_ls1 = 
-    let left_to_ls1_2 =
-    let right_to_ls1_2 =
-}
+//     let left_to_ls1 =
+//     let right_to_ls1 = 
+//     let left_to_ls1_2 =
+//     let right_to_ls1_2 =
+// }

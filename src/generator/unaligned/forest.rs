@@ -15,7 +15,7 @@ pub fn generate_forest<R: Rng>(level: &mut UnalignedLevel<String>, tries: usize,
     let scaler = Vector::new(max_x - min_x, max_y - min_y);
     let min_corner = Vector::new(min_x, min_y);
 
-    let (mut rand_x, rand_y) = rands;
+    let (rand_x, rand_y) = rands;
 
     let min_side = f32::min(scaler.x, scaler.y);
     let tree_size = Range::new(min_r, max_r);
