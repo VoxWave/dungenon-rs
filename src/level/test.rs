@@ -3,8 +3,8 @@ use super::Hitbox;
 use super::unaligned_level::{line_line_intersection_point, LineIntersectError};
 
 fn assert_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
-    // assert!(hitbox1.collides(hitbox1));
-    // assert!(hitbox2.collides(hitbox2));
+    assert!(hitbox1.collides(hitbox1));
+    assert!(hitbox2.collides(hitbox2));
     assert!(hitbox1.collides(hitbox2));
     assert!(hitbox2.collides(hitbox1));
 }
