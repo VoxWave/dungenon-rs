@@ -1,6 +1,6 @@
 use {Vector, Point};
 
-use na::zero;
+use na::{zero, dot};
 use na::geometry::Rotation2;
 use alga::linear::Transformation;
 
@@ -63,12 +63,13 @@ pub enum Hitbox {
     Circle(Vector<f32>, f32),
     ///First vector denotes the center of the AABB and the second vector denotes the dimensions(width, height) of the AABB
     Aabb(Vector<f32>, Vector<f32>),
-    Rectangle(Vector<f32>, Vector<f32>, f32),
+    Rectangle(Point<f32>, Point<f32>, f32),
     Line(Point<f32>, Vector<f32>),
     LineSegment(Point<f32>, Point<f32>),
+    Dot(Point<f32>),
 }
 impl Hitbox {
-    pub fn collides(&self, hitbox: &Hitbox) -> bool {
+    pub fn collides<'a>(&'a self, hitbox: &'a Hitbox) -> bool {
         use self::Hitbox::*;
         match (self, hitbox) {
             (&Circle(ref a_lpos, ref a_radius), &Circle(ref b_lpos, ref b_radius)) => {
@@ -89,42 +90,66 @@ impl Hitbox {
             },
             (&Circle(ref c_lpos, ref c_radius), &Rectangle(ref r_spos, ref r_epos, ref r_height)) |
             (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Circle(ref c_lpos, ref c_radius)) => {
-                let rotation = Rotation2::rotation_between(&(r_epos-r_spos),&Vector::new(1.,0.));
-                let rot_circle = rotation.transform_vector(&(c_lpos-r_spos));
+                let rotation = Rotation2::rotation_between(&(r_epos - r_spos), &Vector::new(1.,0.));
+                let rot_circle = rotation.transform_vector(&(c_lpos - r_spos.coords));
                 let aabb_width = (r_epos-r_spos).norm();
                 let aabb_center = Vector::new(aabb_width/2., r_height/2.);
                 let aabb = Aabb(aabb_center, Vector::new(aabb_width, *r_height));
                 Hitbox::collides(&aabb, &Circle(rot_circle, *c_radius))
             },
-
-            (&Aabb(ref aabb_pos, ref aabb_sides), &Rectangle(ref r_spos, ref r_epos, ref r_height)) |
-            (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Aabb(ref aabb_pos, ref aabb_sides)) => {
-                //TODO: slope breaks when vertical
-                let slope = (r_epos.y - r_spos.y)/(r_epos.x - r_spos.x);
-                let left_epos = Vector::new(r_spos.y-r_epos.y, r_epos.x-r_spos.x).normalize()* *r_height;
-                let aabb_left = aabb_pos.x - aabb_sides.x/2.;
-                let aabb_left_rectangle_bottom_intersect = (aabb_left - r_spos.x)*slope+r_spos.y;
-                let aabb_left_rectangle_top_intersect = (aabb_left - (r_spos.x + left_epos.x))*slope+r_spos.y+left_epos.y;
-                //TODO: slope2 breaks when vertical
-                let slope_2 = (left_epos.y - r_spos.y)/(left_epos.x - r_spos.x);
-                let aabb_left_rectangle_left_intersect = (aabb_left - r_spos.x)*slope_2+r_spos.y;
-                let aabb_left_rectangle_right_intersect = (aabb_left - (r_spos.x + r_epos.x))*slope_2+r_spos.y+r_epos.y;
-                let aabb_bottom = aabb_pos.y - aabb_sides.y/2.;
-                let aabb_top = aabb_pos.y + aabb_sides.y/2.;
-                if aabb_left_rectangle_bottom_intersect >= aabb_bottom && aabb_left_rectangle_bottom_intersect <= aabb_top {
-                    true
-                } else if aabb_left_rectangle_top_intersect >= aabb_bottom && aabb_left_rectangle_top_intersect <= aabb_top {
-                    true
-                } else if aabb_left_rectangle_left_intersect >= aabb_bottom && aabb_left_rectangle_left_intersect <= aabb_top {
-                    true
-                } else if aabb_left_rectangle_right_intersect >= aabb_bottom && aabb_left_rectangle_right_intersect <= aabb_top {
-                    true
-                } else {
-                    false
-                }
-                
+            (&Aabb(ref aabb_pos, ref aabb_sides), r @ &Rectangle(..)) |
+            (r @ &Rectangle(..), &Aabb(ref aabb_pos, ref aabb_sides)) => {
+                let s_pos = Point::from_coordinates(*aabb_pos);
+                let e_pos = Point::from_coordinates(aabb_pos + Vector::new(aabb_sides.x, 0.));
+                Hitbox::collides(r, &Rectangle(s_pos, e_pos, aabb_sides.y))
             },
+            (&Rectangle(ref r1_spos, ref r1_epos, ref r1_height), &Rectangle(ref r2_spos, ref r2_epos, ref r2_height)) => {
+                let perp = Vector::new(r1_epos.y - r1_spos.y, r1_epos.x - r1_spos.x).normalize() * *r1_height;
+                let a1 = r1_spos;
+                let b1 = a1 + perp;
+                let c1 = r1_epos;
+                let d1 = c1 + perp;
 
+                let perp = Vector::new(r2_epos.y - r2_spos.y, r2_epos.x - r2_spos.x).normalize() * *r2_height;
+                let a2 = r2_spos;
+                let b2 = a2 + perp;
+                let c2 = r2_epos;
+                let d2 = c2 + perp;
+
+                let r1 = &Rectangle(*r1_spos, *r1_epos, *r1_height);
+                let r2 = &Rectangle(*r2_spos, *r2_epos, *r2_height);
+
+                Hitbox::collides(r1, &Dot(*a2)) ||
+                Hitbox::collides(r1, &Dot(b2)) ||
+                Hitbox::collides(r1, &Dot(*c2)) ||
+                Hitbox::collides(r1, &Dot(d2)) ||
+
+                Hitbox::collides(r2, &Dot(*a1)) ||
+                Hitbox::collides(r2, &Dot(b1)) ||
+                Hitbox::collides(r2, &Dot(*c1)) ||
+                Hitbox::collides(r2, &Dot(d1))
+            },
+            (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Dot(ref p)) |
+            (&Dot(ref p), &Rectangle(ref r_spos, ref r_epos, ref r_height)) => {
+                let perp = Vector::new(r_epos.y - r_spos.y, r_epos.x - r_spos.x).normalize() * *r_height;
+                let a = &r_spos.coords;
+                let b = &r_epos.coords;
+                let c = &(b + perp);
+                let d = &(a + perp);
+
+                let which_side = |(a, b): (&Vector<f32>, &Vector<f32>), c: &Vector<f32>| {
+                    let diff = b - a;
+                    dot(&(c - a), &Vector::new(-diff.y, diff.x))
+                };
+
+                let p = &p.coords;
+
+                which_side((a, b), p) >= 0. &&
+                which_side((b, c), p) >= 0. &&
+                which_side((c, d), p) >= 0. &&
+                which_side((d, a), p) >= 0.
+            },
+            (&Dot(ref p1), &Dot(ref p2)) => p1 == p2,
             (&Aabb(ref a1_lpos, ref a1_sides), &Aabb(ref a2_lpos, ref a2_sides)) => {
                 let a1_center = *a1_lpos;
                 let a2_center = *a2_lpos;
@@ -183,8 +208,7 @@ impl Hitbox {
                     },
                 }
             },
-
-            _ => unimplemented!(),
+            ref u => unimplemented!("{:?}", u),
         }
     }
 }
