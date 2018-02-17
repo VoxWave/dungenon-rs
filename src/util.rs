@@ -1,6 +1,19 @@
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Neg};
+use std::fmt::Debug;
 use std::default::Default;
 use Vector;
+
+pub trait Perp {
+    fn perpendicular(&self) -> Self;
+}
+
+impl<F> Perp for Vector<F>
+    where F: Copy + PartialEq + Neg<Output=F> + Debug + 'static
+{
+    fn perpendicular(&self) -> Self {
+        Vector::new(-self.y, self.x)
+    }
+}
 
 #[derive(Clone)]
 pub struct Grid<T> {

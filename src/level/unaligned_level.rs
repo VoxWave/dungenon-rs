@@ -1,7 +1,10 @@
 use {Vector, Point};
 
+use util::Perp;
+
 use na::{zero, dot};
 use na::geometry::Rotation2;
+
 use alga::linear::Transformation;
 
 use rayon::iter::{ParallelIterator};
@@ -104,13 +107,13 @@ impl Hitbox {
                 Hitbox::collides(r, &Rectangle(s_pos, e_pos, aabb_sides.y))
             },
             (&Rectangle(ref r1_spos, ref r1_epos, ref r1_height), &Rectangle(ref r2_spos, ref r2_epos, ref r2_height)) => {
-                let perp = Vector::new(r1_epos.y - r1_spos.y, r1_epos.x - r1_spos.x).normalize() * *r1_height;
+                let perp = (r1_epos - r1_spos).perpendicular().normalize() * *r1_height;
                 let a1 = r1_spos;
                 let b1 = a1 + perp;
                 let c1 = r1_epos;
                 let d1 = c1 + perp;
 
-                let perp = Vector::new(r2_epos.y - r2_spos.y, r2_epos.x - r2_spos.x).normalize() * *r2_height;
+                let perp = (r2_epos - r2_spos).perpendicular().normalize() * *r2_height;
                 let a2 = r2_spos;
                 let b2 = a2 + perp;
                 let c2 = r2_epos;
@@ -131,19 +134,18 @@ impl Hitbox {
             },
             (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Dot(ref p)) |
             (&Dot(ref p), &Rectangle(ref r_spos, ref r_epos, ref r_height)) => {
-                let perp = Vector::new(r_epos.y - r_spos.y, r_epos.x - r_spos.x).normalize() * *r_height;
+                let perp = (r_epos - r_spos).perpendicular().normalize() * *r_height;
                 let a = &r_spos.coords;
                 let b = &r_epos.coords;
                 let c = &(b + perp);
                 let d = &(a + perp);
 
-                let which_side = |(a, b): (&Vector<f32>, &Vector<f32>), c: &Vector<f32>| {
+                let which_side = |(a, b): (&Vector<f32>, &Vector<f32>), c| {
                     let diff = b - a;
-                    dot(&(c - a), &Vector::new(-diff.y, diff.x))
+                    dot(&(c - a), &diff.perpendicular())
                 };
 
                 let p = &p.coords;
-
                 which_side((a, b), p) >= 0. &&
                 which_side((b, c), p) >= 0. &&
                 which_side((c, d), p) >= 0. &&

@@ -1,12 +1,13 @@
 use {Vector, Point};
 use super::Hitbox;
 use super::unaligned_level::{line_line_intersection_point, LineIntersectError};
+use util::Perp;
 
 fn assert_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
-    assert!(hitbox1.collides(hitbox1));
-    assert!(hitbox2.collides(hitbox2));
     assert!(hitbox1.collides(hitbox2));
     assert!(hitbox2.collides(hitbox1));
+    assert!(hitbox1.collides(hitbox1));
+    assert!(hitbox2.collides(hitbox2));
 }
 
 fn assert_not_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
@@ -106,7 +107,7 @@ fn rectangle_circle_up_side_touching() {
 }
 
 #[test]
-fn rectangle_rectangle_down_side_touching() {
+fn rectangle_circle_lower_side_touching() {
     let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
     let circle = Hitbox::Circle(Vector::new(0., -1.), 1.);
 
@@ -142,7 +143,7 @@ fn rectangle_aabb_left() {
     let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let rectangle = Hitbox::Rectangle(Point::new(-1., -1.), Point::new(-0.4, 0.), 1.);
     
-    assert_collides(&rectangle, &aabb);
+    assert_not_collides(&rectangle, &aabb);
 }
 
 #[test]
@@ -303,3 +304,32 @@ fn rectangle_point_no_collisions() {
     assert_not_collides(&rectangle, &point3);
     assert_not_collides(&rectangle, &point4);
 }
+#[test]
+fn rectangle_collides_with_its_points() {
+    let spos = Point::new(-1., -1.);
+    let epos = Point::new(-0.5, 0.);
+    let thickness = 1.;
+
+    let rectangle = Hitbox::Rectangle(spos, epos, thickness);
+
+    let perp = (epos - spos).perpendicular().normalize() * thickness;
+    let a1 = spos;
+    let b1 = a1 + perp;
+    let c1 = epos;
+    let d1 = c1 + perp;
+
+    assert_collides(&rectangle, &Hitbox::Dot(a1));
+    assert_collides(&rectangle, &Hitbox::Dot(b1));
+    assert_collides(&rectangle, &Hitbox::Dot(c1));
+    assert_collides(&rectangle, &Hitbox::Dot(d1));
+}
+
+
+#[test]
+fn rectangle_rectangle_cross_collides() {
+    let rectangle1 = Hitbox::Rectangle(Point::new(2., -2.), Point::new(-2., 2.), 0.2);
+    let rectangle2 = Hitbox::Rectangle(Point::new(2., 2.), Point::new(-2., -2.), 0.2);
+
+    assert_collides(&rectangle1, &rectangle2);
+}
+
