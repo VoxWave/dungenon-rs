@@ -333,3 +333,17 @@ fn rectangle_rectangle_cross_collides() {
     assert_collides(&rectangle1, &rectangle2);
 }
 
+#[test]
+fn rectangle_rectangle_corner_cross_collides() {
+    let rectangle1 = Hitbox::Rectangle(Point::new(-1., 0.), Point::new(1., 0.), 2.);
+
+    let rectangle2 = Hitbox::Rectangle(Point::new(-1.3, 1.), Point::new(0., 2.3), 0.2);
+    let rectangle3 = Hitbox::Rectangle(Point::new(0., 2.3), Point::new(1.3, 1.), 0.2);
+    let rectangle4 = Hitbox::Rectangle(Point::new(0., -0.3), Point::new(1.3, 1.), 0.2);
+    let rectangle5 = Hitbox::Rectangle(Point::new(-1.3, 1.), Point::new(0., -0.3), 0.2);
+
+    assert_collides(&rectangle1, &rectangle2);
+    assert_collides(&rectangle1, &rectangle3);
+    assert_collides(&rectangle1, &rectangle4);
+    assert_collides(&rectangle1, &rectangle5);
+}

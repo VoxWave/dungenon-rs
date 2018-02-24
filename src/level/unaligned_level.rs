@@ -122,6 +122,11 @@ impl Hitbox {
                 let r1 = &Rectangle(*r1_spos, *r1_epos, *r1_height);
                 let r2 = &Rectangle(*r2_spos, *r2_epos, *r2_height);
 
+                let r1_line_ad = &Hitbox::LineSegment(*a1, d1);
+                let r1_line_bc = &Hitbox::LineSegment(b1, *c1);
+                let r2_line_ad = &Hitbox::LineSegment(*a2, d2);
+                let r2_line_bc = &Hitbox::LineSegment(b2, *c2);
+
                 Hitbox::collides(r1, &Dot(*a2)) ||
                 Hitbox::collides(r1, &Dot(b2)) ||
                 Hitbox::collides(r1, &Dot(*c2)) ||
@@ -130,7 +135,13 @@ impl Hitbox {
                 Hitbox::collides(r2, &Dot(*a1)) ||
                 Hitbox::collides(r2, &Dot(b1)) ||
                 Hitbox::collides(r2, &Dot(*c1)) ||
-                Hitbox::collides(r2, &Dot(d1))
+                Hitbox::collides(r2, &Dot(d1)) ||
+
+                Hitbox::collides(r1_line_ad, r2_line_ad) ||
+                Hitbox::collides(r1_line_ad, r2_line_bc) ||
+                Hitbox::collides(r1_line_bc, r2_line_ad) ||
+                Hitbox::collides(r1_line_bc, r2_line_bc)
+
             },
             (&Rectangle(ref r_spos, ref r_epos, ref r_height), &Dot(ref p)) |
             (&Dot(ref p), &Rectangle(ref r_spos, ref r_epos, ref r_height)) => {
