@@ -27,6 +27,15 @@ impl<T> UnalignedLevel<T> {
     }
 }
 
+impl<'a, T> IntoIterator for &'a UnalignedLevel<T> {
+    type IntoIter = ::std::slice::Iter<'a, Object<T>>;
+    type Item = &'a Object<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.objects.iter()
+    }
+}
+
 impl<T: Sync> UnalignedLevel<T> {
     
     ///Adds an `Object` to the level if it doesn't collide with other objects

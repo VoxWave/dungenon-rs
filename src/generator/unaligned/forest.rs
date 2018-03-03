@@ -8,6 +8,12 @@ use rand::distributions::{Range, IndependentSample};
 use poisson::{Builder, Type};
 use poisson::algorithm::Bridson;
 
+/// Generates a forest full of trees. 
+/// ´level´ is the level that the forest is generate in. 
+/// ´tries´ is the number of trees the algorithm tries to generate.
+/// ´tree_radius´ is a tuple of the minimum and maximum radiuses.
+/// ´rands´ is a tuple of two random number generators needed for the algorithm.
+/// ´area´ is a tuple of tuples forming an AABB to denote the area in which the forest is generated. 
 pub fn generate_forest<R: Rng>(level: &mut UnalignedLevel<String>, tries: usize, tree_radius: (f32, f32), rands: (&mut R, &mut R), area: ((f32,f32),(f32,f32))) {
     let ((min_x, min_y),(max_x, max_y)) = area;
     let (min_r, max_r) = tree_radius;
