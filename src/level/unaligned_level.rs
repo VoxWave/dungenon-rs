@@ -81,6 +81,14 @@ pub enum Hitbox {
     Dot(Point<f32>),
 }
 impl Hitbox {
+    pub fn center(&self) -> Point<f32> {
+        use self::Hitbox::*;
+        match *self {
+            Circle(ref center, _) => Point::from_coordinates(*center),
+            _ => unimplemented!(), 
+        }
+    }
+
     pub fn collides<'a>(&'a self, hitbox: &'a Hitbox) -> bool {
         use self::Hitbox::*;
         match (self, hitbox) {
