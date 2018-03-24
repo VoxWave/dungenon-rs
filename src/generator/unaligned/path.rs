@@ -7,7 +7,7 @@ use level::{Hitbox, Object, UnalignedLevel};
 
 pub fn generate_linear_path(
     level: &mut UnalignedLevel<String>,
-    points: &Vec<Point<f32>>,
+    points: &[Point<f32>],
     path_thickness: f32,
 ) {
     for p2 in points.windows(2) {

@@ -9,7 +9,7 @@ use level::{Hitbox, UnalignedLevel};
 
 pub fn generate_linear_forest_path<R: Rng>(
     level: &mut UnalignedLevel<String>,
-    points: &Vec<Point<f32>>,
+    points: &[Point<f32>],
     rands: (&mut R, &mut R),
     path_thickness: f32,
     tree_radius: (f32, f32),
