@@ -10,15 +10,16 @@ pub struct DungeonGen {
 
 impl DungeonGen {
     pub fn new(mazegen: MazeGen, roomgen: RoomGen) -> DungeonGen {
-        DungeonGen{
+        DungeonGen {
             mazegen: mazegen,
             roomgen: roomgen,
         }
     }
 
     pub fn generate(&mut self, level: &mut GridLevel<Tile>) {
-        level.apply(|m| self.mazegen.generate(m))
-        .apply(|m| self.roomgen.generate(m));
+        level
+            .apply(|m| self.mazegen.generate(m))
+            .apply(|m| self.roomgen.generate(m));
 
         while fill_dead_end_tiles(level) {}
     }

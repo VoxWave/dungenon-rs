@@ -1,4 +1,4 @@
-use {Vector, Point};
+use {Point, Vector};
 use super::Hitbox;
 use super::unaligned_level::{line_line_intersection_point, LineIntersectError};
 use util::Perp;
@@ -19,10 +19,10 @@ fn assert_not_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
 fn circle_circle_collision() {
     let circle1 = Hitbox::Circle(Vector::new(0., 0.), 1.);
     let circle2 = Hitbox::Circle(Vector::new(1.9, 0.), 1.);
-    let circle3 = Hitbox::Circle(Vector::new(2.,2.), 1.);
+    let circle3 = Hitbox::Circle(Vector::new(2., 2.), 1.);
 
     assert_collides(&circle1, &circle2);
-    
+
     assert_not_collides(&circle1, &circle3);
     assert_not_collides(&circle2, &circle3);
 }
@@ -68,7 +68,7 @@ fn circle_aabb_collision() {
 
 #[test]
 fn rectangle_circle_inside() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
     let circle = Hitbox::Circle(Vector::new(0.5, 0.5), 0.5);
 
     assert_collides(&rectangle, &circle);
@@ -76,39 +76,39 @@ fn rectangle_circle_inside() {
 
 #[test]
 fn rectangle_circle_really_distant() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
-    let circle = Hitbox::Circle(Vector::new(100.,100.), 1.);
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(100., 100.), 1.);
 
     assert_not_collides(&rectangle, &circle);
 }
 
 #[test]
 fn rectangle_circle_right_side_touching() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
-    let circle = Hitbox::Circle(Vector::new(2.,1.), 1.);
-    
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(2., 1.), 1.);
+
     assert_collides(&rectangle, &circle);
 }
 
 #[test]
 fn rectangle_circle_left_side_touching() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
-    let circle = Hitbox::Circle(Vector::new(-2.,1.), 1.);
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(-2., 1.), 1.);
 
     assert_collides(&rectangle, &circle);
 }
 
 #[test]
 fn rectangle_circle_up_side_touching() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
-    let circle = Hitbox::Circle(Vector::new(0. ,3.), 1.);
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
+    let circle = Hitbox::Circle(Vector::new(0., 3.), 1.);
 
     assert_collides(&rectangle, &circle);
 }
 
 #[test]
 fn rectangle_circle_lower_side_touching() {
-    let rectangle = Hitbox::Rectangle(Point::new(0.,0.), Point::new(1.,1.), 2f32.sqrt());
+    let rectangle = Hitbox::Rectangle(Point::new(0., 0.), Point::new(1., 1.), 2f32.sqrt());
     let circle = Hitbox::Circle(Vector::new(0., -1.), 1.);
 
     assert_collides(&rectangle, &circle);
@@ -116,7 +116,7 @@ fn rectangle_circle_lower_side_touching() {
 
 #[test]
 fn rectangle_circle_close_to_side() {
-    let rectangle = Hitbox::Rectangle(Point::new(1.,-1.), Point::new(2.,-1.), 2.);
+    let rectangle = Hitbox::Rectangle(Point::new(1., -1.), Point::new(2., -1.), 2.);
     let circle = Hitbox::Circle(Vector::new(0., 0.), 1.);
 
     assert_collides(&rectangle, &circle);
@@ -124,7 +124,7 @@ fn rectangle_circle_close_to_side() {
 
 #[test]
 fn rectangle_circle_close_to_side_not_touching() {
-    let rectangle = Hitbox::Rectangle(Point::new(1.001,-1.), Point::new(2.,-1.), 2.);
+    let rectangle = Hitbox::Rectangle(Point::new(1.001, -1.), Point::new(2., -1.), 2.);
     let circle = Hitbox::Circle(Vector::new(0., 0.), 1.);
 
     assert_not_collides(&rectangle, &circle);
@@ -134,7 +134,7 @@ fn rectangle_circle_close_to_side_not_touching() {
 fn rectangle_aabb_partial_overlap() {
     let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let rectangle = Hitbox::Rectangle(Point::new(-1., -1.), Point::new(0.5, 0.), 1.);
-    
+
     assert_collides(&rectangle, &aabb);
 }
 
@@ -142,7 +142,7 @@ fn rectangle_aabb_partial_overlap() {
 fn rectangle_aabb_left() {
     let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let rectangle = Hitbox::Rectangle(Point::new(-1., -1.), Point::new(-0.4, 0.), 1.);
-    
+
     assert_not_collides(&rectangle, &aabb);
 }
 
@@ -150,7 +150,7 @@ fn rectangle_aabb_left() {
 fn rectangle_aabb_above_left() {
     let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let rectangle = Hitbox::Rectangle(Point::new(-1., -1.), Point::new(0., 3.), 1.);
-    
+
     assert_not_collides(&rectangle, &aabb);
 }
 
@@ -158,7 +158,7 @@ fn rectangle_aabb_above_left() {
 fn rectangle_aabb_below() {
     let aabb = Hitbox::Aabb(Vector::new(0., 0.), Vector::new(1., 1.));
     let rectangle = Hitbox::Rectangle(Point::new(-4., -4.), Point::new(1., -4.), 0.2);
-    
+
     assert_not_collides(&rectangle, &aabb);
 }
 
@@ -168,8 +168,14 @@ fn lines_intersecting() {
     let v1 = Vector::new(1., 1.);
     let p2 = Point::new(1., -1.);
     let v2 = Vector::new(-1., 1.);
-    assert_eq!(line_line_intersection_point(&p1,&v1,&p2,&v2), Ok(Point::new(0., 0.)));
-    assert_eq!(line_line_intersection_point(&p2,&v2,&p1,&v1), Ok(Point::new(0., 0.)));
+    assert_eq!(
+        line_line_intersection_point(&p1, &v1, &p2, &v2),
+        Ok(Point::new(0., 0.))
+    );
+    assert_eq!(
+        line_line_intersection_point(&p2, &v2, &p1, &v1),
+        Ok(Point::new(0., 0.))
+    );
     let line1 = Hitbox::Line(p1, v1);
     let line2 = Hitbox::Line(p2, v2);
     assert_collides(&line1, &line2);
@@ -181,12 +187,12 @@ fn lines_intersecting_weird() {
     let v1 = Vector::new(1., 1.);
     let p2 = Point::new(1., -1.);
     let v2 = Vector::new(-2.8459832, 2.87654942);
-    match line_line_intersection_point(&p1,&v1,&p2,&v2) {
-        Ok(_) => {},
+    match line_line_intersection_point(&p1, &v1, &p2, &v2) {
+        Ok(_) => {}
         _ => panic!("lines didn't intersect even thought they should"),
     }
-    match line_line_intersection_point(&p2,&v2,&p1,&v1) {
-        Ok(_) => {},
+    match line_line_intersection_point(&p2, &v2, &p1, &v1) {
+        Ok(_) => {}
         _ => panic!("lines didn't intersect even thought they should"),
     }
     let line1 = Hitbox::Line(p1, v1);
@@ -199,8 +205,14 @@ fn lines_not_intersecting() {
     let p1 = Point::new(-1., -1.);
     let v1 = Vector::new(1., 1.);
     let p2 = Point::new(-1., 1.);
-    assert_eq!(line_line_intersection_point(&p1,&v1,&p2,&v1), Err(LineIntersectError::NoCollision));
-    assert_eq!(line_line_intersection_point(&p2,&v1,&p1,&v1), Err(LineIntersectError::NoCollision));
+    assert_eq!(
+        line_line_intersection_point(&p1, &v1, &p2, &v1),
+        Err(LineIntersectError::NoCollision)
+    );
+    assert_eq!(
+        line_line_intersection_point(&p2, &v1, &p1, &v1),
+        Err(LineIntersectError::NoCollision)
+    );
     let line1 = Hitbox::Line(p1, v1.clone());
     let line2 = Hitbox::Line(p2, v1);
     assert_not_collides(&line1, &line2);
@@ -212,8 +224,14 @@ fn lines_equal() {
     let v1 = Vector::new(1., 1.);
     let p2 = Point::new(2., 2.);
     let v2 = Vector::new(3., 3.);
-    assert_eq!(line_line_intersection_point(&p1,&v1,&p2,&v2), Err(LineIntersectError::Infinite));
-    assert_eq!(line_line_intersection_point(&p2,&v2,&p1,&v1), Err(LineIntersectError::Infinite));
+    assert_eq!(
+        line_line_intersection_point(&p1, &v1, &p2, &v2),
+        Err(LineIntersectError::Infinite)
+    );
+    assert_eq!(
+        line_line_intersection_point(&p2, &v2, &p1, &v1),
+        Err(LineIntersectError::Infinite)
+    );
     let line1 = Hitbox::Line(p1, v1);
     let line2 = Hitbox::Line(p2, v2);
     assert_collides(&line1, &line2);
@@ -221,7 +239,7 @@ fn lines_equal() {
 #[test]
 fn line_segment_intersection() {
     let ls1 = Hitbox::LineSegment(Point::new(-1., 0.), Point::new(1., 0.));
-    let ls2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0., 1.)); 
+    let ls2 = Hitbox::LineSegment(Point::new(0., -1.), Point::new(0., 1.));
     let ls1_2 = Hitbox::LineSegment(Point::new(1., 0.), Point::new(-1., 0.));
     let ls2_2 = Hitbox::LineSegment(Point::new(0., 1.), Point::new(0., -1.));
 
@@ -323,7 +341,6 @@ fn rectangle_collides_with_its_points() {
     assert_collides(&rectangle, &Hitbox::Dot(c1));
     assert_collides(&rectangle, &Hitbox::Dot(d1));
 }
-
 
 #[test]
 fn rectangle_rectangle_cross_collides() {

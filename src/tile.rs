@@ -20,9 +20,9 @@ impl Default for Tile {
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum Faction {
-	Faction(usize),
-	Neutral,
-	Void,
+    Faction(usize),
+    Neutral,
+    Void,
 }
 
 impl Default for Faction {

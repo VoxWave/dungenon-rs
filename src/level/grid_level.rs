@@ -1,5 +1,5 @@
 use tile::Tile;
-use util::{Grid, Error};
+use util::{Error, Grid};
 use Vector;
 use std::default::Default;
 
@@ -30,7 +30,7 @@ impl<T> GridLevel<T> {
     }
 
     pub fn get_tile_with_tuple(&self, (x, y): (usize, usize)) -> Result<&T, Error> {
-        self.get_tile(x,y)
+        self.get_tile(x, y)
     }
 
     pub fn get_mut_tile(&mut self, x: usize, y: usize) -> Result<&mut T, Error> {
@@ -46,17 +46,19 @@ impl<T> GridLevel<T> {
     }
 
     pub fn get_mut_tile_with_tuple(&mut self, (x, y): (usize, usize)) -> Result<&mut T, Error> {
-        self.get_mut_tile(x,y)
+        self.get_mut_tile(x, y)
     }
 
-    pub fn apply<F>(&mut self, gen: F) -> &mut GridLevel<T> where F: FnOnce(&mut GridLevel<T>) {
+    pub fn apply<F>(&mut self, gen: F) -> &mut GridLevel<T>
+    where
+        F: FnOnce(&mut GridLevel<T>),
+    {
         gen(self);
         self
     }
-
 }
 
-impl<T: Default+Clone> GridLevel<T> {
+impl<T: Default + Clone> GridLevel<T> {
     pub fn fill_with(&mut self, tile: T) {
         let width = self.tiles.get_width();
         let height = self.tiles.get_height();
@@ -69,13 +71,13 @@ impl<T: Default+Clone> GridLevel<T> {
     }
 
     pub fn new(width: usize, height: usize) -> GridLevel<T> {
-        GridLevel{
+        GridLevel {
             tiles: Grid::new(width, height),
         }
     }
 
     pub fn new_filled_with(tile: T, width: usize, height: usize) -> GridLevel<T> {
-        GridLevel{
+        GridLevel {
             tiles: Grid::new_filled_with(tile, width, height),
         }
     }
@@ -88,14 +90,14 @@ pub fn fill_dead_end_tiles(level: &mut GridLevel<Tile>) -> bool {
             if let Ok(n) = level.get_tile(x, y) {
                 if let &Tile::Floor(_) = n {
                     if is_deadend(level, x, y) {
-                        deadends.push((x,y));
+                        deadends.push((x, y));
                     }
                 }
             }
         }
     }
     let mut filled_deadend = false;
-    for &(x,y) in &deadends {
+    for &(x, y) in &deadends {
         if let Ok(tile) = level.get_mut_tile(x, y) {
             *tile = Tile::Wall(0);
             filled_deadend = true;
@@ -109,8 +111,11 @@ pub fn is_deadend(level: &GridLevel<Tile>, x: usize, y: usize) -> bool {
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {
         let vector = dir.get_vec();
-        let coord = match (add_isize_to_usize(vector.x, x), add_isize_to_usize(vector.y, y)) {
-            (Some(x), Some(y)) => (x,y),
+        let coord = match (
+            add_isize_to_usize(vector.x, x),
+            add_isize_to_usize(vector.y, y),
+        ) {
+            (Some(x), Some(y)) => (x, y),
             _ => continue,
         };
 
@@ -121,13 +126,13 @@ pub fn is_deadend(level: &GridLevel<Tile>, x: usize, y: usize) -> bool {
     paths < 2
 }
 
-pub fn add_isize_to_usize(i: isize, mut u: usize,) -> Option<usize> {
+pub fn add_isize_to_usize(i: isize, mut u: usize) -> Option<usize> {
     if i < 0 && u != 0 {
         u -= (-i) as usize;
     } else if i >= 0 && u < usize::max_value() {
         u += i as usize;
     } else {
-        return None
+        return None;
     }
     Some(u)
 }
