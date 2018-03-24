@@ -17,7 +17,7 @@ pub fn generate_linear_path(
             "de way".into(),
             Hitbox::Rectangle(point1, point2, path_thickness),
         );
-        level.add_unchecked(rectangle);
+        level.add(rectangle);
     }
 }
 

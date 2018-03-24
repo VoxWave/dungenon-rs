@@ -7,3 +7,4 @@ pub use self::grid::room::RoomGen;
 pub use self::grid::faction::FactionGen;
 
 pub use self::unaligned::forest::generate_forest;
+pub use self::unaligned::forest_path::generate_linear_forest_path;
