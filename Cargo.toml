@@ -14,3 +14,8 @@ alga = "0.5.2"
 [dependencies.poisson]
 branch = "dev2"
 git = "https://github.com/WaDelma/poisson.git"
+# [dependencies.poisson]
+# git = "https://github.com/WaDelma/poisson.git"
+
+[workspace]
+members = ["demos/pinter"]

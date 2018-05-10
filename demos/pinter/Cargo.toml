@@ -1,0 +1,15 @@
+[package]
+name = "pinter"
+version = "0.1.0"
+authors = ["Victor Bankowski <victor_bankowski@hotmail.com>"]
+workspace = "../../"
+
+[dependencies]
+dungenon = {path = "../../"}
+cast = "0.1.0"
+rand = "0.3.13"
+
+[dependencies.image]
+version = "0.7.0"
+default-features = false
+features = ["png_codec"]
