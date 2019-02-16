@@ -1,14 +1,14 @@
-use level::{add_isize_to_usize, GridLevel};
+use crate::level::{add_isize_to_usize, GridLevel};
 
-use Vector;
+use crate::Vector;
 
 use rand::os::OsRng;
 use rand::XorShiftRng;
 use rand::Rand;
 use rand::Rng;
 
-use tile::Tile;
-use util::Direction;
+use crate::tile::Tile;
+use crate::util::Direction;
 
 pub struct MazeGen {
     pub pos: Vector<usize>,
@@ -24,7 +24,7 @@ impl MazeGen {
     }
 
     pub fn generate(&mut self, level: &mut GridLevel<Tile>) {
-        use util::Error;
+        use crate::util::Error;
         let mut stack: Vec<Vector<usize>> = Vec::new();
         stack.push(self.pos);
         'mainloop: while let Some(cur) = stack.pop() {

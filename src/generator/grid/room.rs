@@ -2,11 +2,11 @@ use rand::os::OsRng;
 use rand::{Rand, XorShiftRng};
 use rand::distributions::{IndependentSample, Range};
 
-use Point;
+use crate::Point;
 
-use tile::Tile;
+use crate::tile::Tile;
 
-use level::GridLevel;
+use crate::level::GridLevel;
 
 pub struct RoomGen {
     rand_x: XorShiftRng,
@@ -83,7 +83,7 @@ impl RoomGen {
     }
 
     fn carve(&self, level: &mut GridLevel<Tile>) {
-        use util::Error;
+        use crate::util::Error;
         let room_distance = self.room_distance.clone();
         for room in &self.rooms {
             for y in room.min.y..room.max.y - room_distance + 1 {

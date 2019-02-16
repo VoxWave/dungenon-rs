@@ -9,11 +9,11 @@ use rand::SeedableRng;
 use rayon::prelude::*;
 use smallvec::SmallVec;
 
-use tile::Faction;
+use crate::tile::Faction;
 
-use util::{Direction, Error};
+use crate::util::{Direction, Error};
 
-use level::{add_isize_to_usize, GridLevel};
+use crate::level::{add_isize_to_usize, GridLevel};
 
 pub struct FactionGen {
     rand: XorShiftRng,

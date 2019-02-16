@@ -1,6 +1,6 @@
-use tile::Tile;
-use util::{Error, Grid};
-use Vector;
+use crate::tile::Tile;
+use crate::util::{Error, Grid};
+use crate::Vector;
 use std::default::Default;
 
 #[derive(Clone)]
@@ -107,7 +107,7 @@ pub fn fill_dead_end_tiles(level: &mut GridLevel<Tile>) -> bool {
 }
 
 pub fn is_deadend(level: &GridLevel<Tile>, x: usize, y: usize) -> bool {
-    use util::Direction;
+    use crate::util::Direction;
     let mut paths = 0;
     for dir in Direction::get_orthogonal_dirs() {
         let vector = dir.get_vec();

@@ -1,9 +1,9 @@
 use rand::Rng;
 
-use Vector;
-use Point;
+use crate::Vector;
+use crate::Point;
 
-use level::{Hitbox, Object, UnalignedLevel};
+use crate::level::{Hitbox, Object, UnalignedLevel};
 
 pub fn generate_linear_path(
     level: &mut UnalignedLevel<String>,

@@ -1,9 +1,9 @@
-use {Point, Vector};
+use crate::{Point, Vector};
 
-use util::Perp;
+use crate::util::Perp;
 
-use na::{dot, zero};
-use na::geometry::Rotation2;
+use crate::na::{dot, zero};
+use crate::na::geometry::Rotation2;
 
 use alga::linear::Transformation;
 

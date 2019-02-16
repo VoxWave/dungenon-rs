@@ -1,6 +1,6 @@
-use Vector;
+use crate::Vector;
 
-use level::{Hitbox, Object, UnalignedLevel};
+use crate::level::{Hitbox, Object, UnalignedLevel};
 
 use rand::Rng;
 use rand::distributions::{IndependentSample, Range};
