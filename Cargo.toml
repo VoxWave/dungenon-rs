@@ -12,6 +12,9 @@ smallvec = "0.3"
 # poisson = "0.9"
 alga = "0.5.2"
 
+[dependencies.kolli-desu]
+git = "https://github.com/WaDelma/kolli-desu.git"
+
 [dependencies.poisson]
 branch = "dev2"
 git = "https://github.com/WaDelma/poisson.git"

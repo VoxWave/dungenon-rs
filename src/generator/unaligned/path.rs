@@ -16,6 +16,7 @@ pub fn generate_linear_path(
         let rectangle = Object::new(
             "de way".into(),
             Hitbox::Rectangle(point1, point2, path_thickness),
+            Point::new(0., 0.)
         );
         level.add(rectangle);
     }
