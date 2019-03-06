@@ -1,6 +1,6 @@
-use Vector;
+use crate::{Vector, Point};
 
-use level::{Hitbox, Object, UnalignedLevel};
+use crate::level::{Hitbox, Object, UnalignedLevel};
 
 use rand::Rng;
 use rand::distributions::{IndependentSample, Range};
@@ -37,10 +37,10 @@ pub fn generate_forest<R: Rng>(
 
     for v in poisson_gen {
         let hitbox = Hitbox::Circle(
-            v.component_mul(&scaler) + min_corner,
+            v.component_mul(&scaler),
             tree_size.ind_sample(rand_x),
         );
-        let object = Object::new("tree".to_owned(), hitbox);
+        let object = Object::new("tree".to_owned(), hitbox, Point::from_coordinates(min_corner));
         level.add(object);
     }
 }

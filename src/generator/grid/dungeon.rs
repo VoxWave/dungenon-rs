@@ -1,7 +1,7 @@
-use generator::{MazeGen, RoomGen};
-use level::GridLevel;
-use level::fill_dead_end_tiles;
-use tile::Tile;
+use crate::generator::{MazeGen, RoomGen};
+use crate::level::GridLevel;
+use crate::level::fill_dead_end_tiles;
+use crate::tile::Tile;
 
 pub struct DungeonGen {
     mazegen: MazeGen,

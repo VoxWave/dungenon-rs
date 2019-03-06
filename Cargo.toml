@@ -2,6 +2,7 @@
 name = "dungenon"
 version = "0.4.0"
 authors = ["VoxWave <victor_bankowski@hotmail.com>"]
+edition = "2018"
 
 [dependencies]
 rand = "0.4"
@@ -10,6 +11,9 @@ rayon = "0.8"
 smallvec = "0.3"
 # poisson = "0.9"
 alga = "0.5.2"
+
+[dependencies.kolli-desu]
+git = "https://github.com/WaDelma/kolli-desu.git"
 
 [dependencies.poisson]
 branch = "dev2"

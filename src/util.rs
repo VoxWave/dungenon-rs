@@ -1,7 +1,7 @@
 use std::ops::{Index, IndexMut, Neg};
 use std::fmt::Debug;
 use std::default::Default;
-use Vector;
+use crate::Vector;
 
 pub trait Perp {
     fn perpendicular(&self) -> Self;

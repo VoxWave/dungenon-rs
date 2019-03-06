@@ -1,11 +1,11 @@
 use rand::Rng;
 
-use Point;
+use crate::Point;
 
 use super::forest::generate_forest;
 use super::path::generate_linear_path;
 
-use level::{Hitbox, UnalignedLevel};
+use crate::level::{Hitbox, UnalignedLevel};
 
 pub fn generate_linear_forest_path<R: Rng>(
     level: &mut UnalignedLevel<String>,
@@ -20,10 +20,10 @@ pub fn generate_linear_forest_path<R: Rng>(
 }
 
 pub fn generate_noisy_forest_path<R: Rng>(
-    level: &mut UnalignedLevel<String>,
-    points: &Vec<Point<f32>>,
-    rand: R,
-    path_thickness: f32,
+    _level: &mut UnalignedLevel<String>,
+    _points: &Vec<Point<f32>>,
+    _rand: R,
+    _path_thickness: f32,
 ) {
 
 }

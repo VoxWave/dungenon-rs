@@ -1,7 +1,7 @@
-use {Point, Vector};
+use crate::{Point, Vector};
 use super::Hitbox;
 use super::unaligned_level::{line_line_intersection_point, LineIntersectError};
-use util::Perp;
+use crate::util::Perp;
 
 fn assert_collides(hitbox1: &Hitbox, hitbox2: &Hitbox) {
     assert!(hitbox1.collides(hitbox2));
