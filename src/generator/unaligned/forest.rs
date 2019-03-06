@@ -1,12 +1,14 @@
 use crate::{Vector, Point};
 
-use crate::level::{Hitbox, Object, UnalignedLevel};
+use crate::level::{Object, UnalignedLevel};
 
 use rand::Rng;
 use rand::distributions::{IndependentSample, Range};
 
 use poisson::{Builder, Type};
 use poisson::algorithm::Bridson;
+
+use kolli_desu::shapes::Circle;
 
 /// Generates a forest full of trees.
 /// ´level´ is the level that the forest is generate in.
@@ -36,11 +38,11 @@ pub fn generate_forest<R: Rng>(
             .build(rand_y, Bridson);
 
     for v in poisson_gen {
-        let hitbox = Hitbox::Circle(
-            v.component_mul(&scaler),
+        let hitbox = Circle::new(
+            v.component_mul(&scaler).coords,
             tree_size.ind_sample(rand_x),
         );
-        let object = Object::new("tree".to_owned(), hitbox, Point::from_coordinates(min_corner));
+        let object = Object::new("tree".to_owned(), Box::new(hitbox), min_corner.coords);
         level.add(object);
     }
 }

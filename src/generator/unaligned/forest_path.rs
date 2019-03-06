@@ -5,7 +5,7 @@ use crate::Point;
 use super::forest::generate_forest;
 use super::path::generate_linear_path;
 
-use crate::level::{Hitbox, UnalignedLevel};
+use crate::level::UnalignedLevel;
 
 pub fn generate_linear_forest_path<R: Rng>(
     level: &mut UnalignedLevel<String>,

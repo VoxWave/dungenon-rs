@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 rand = "0.4"
-nalgebra = "0.14.1"
+nalgebra = "0.17.2"
 rayon = "0.8"
 smallvec = "0.3"
 # poisson = "0.9"
@@ -18,8 +18,6 @@ git = "https://github.com/WaDelma/kolli-desu.git"
 [dependencies.poisson]
 branch = "dev2"
 git = "https://github.com/WaDelma/poisson.git"
-# [dependencies.poisson]
-# git = "https://github.com/WaDelma/poisson.git"
 
 [workspace]
 members = ["demos/pinter"]
