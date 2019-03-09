@@ -1,6 +1,8 @@
-use rand::os::OsRng;
-use rand::{Rand, XorShiftRng};
-use rand::distributions::{IndependentSample, Range};
+use rand::{
+    FromEntropy,
+    Rng,
+    rngs::SmallRng,
+};
 
 use crate::Point;
 
@@ -9,8 +11,8 @@ use crate::tile::Tile;
 use crate::level::GridLevel;
 
 pub struct RoomGen {
-    rand_x: XorShiftRng,
-    rand_y: XorShiftRng,
+    rand_x: SmallRng,
+    rand_y: SmallRng,
     max_room_size: usize,
     min_room_size: usize,
     room_distance: usize,
@@ -26,8 +28,8 @@ impl RoomGen {
         attempts: u64,
     ) -> RoomGen {
         RoomGen {
-            rand_x: XorShiftRng::rand(&mut OsRng::new().unwrap()),
-            rand_y: XorShiftRng::rand(&mut OsRng::new().unwrap()),
+            rand_x: SmallRng::from_entropy(),
+            rand_y: SmallRng::from_entropy(),
             max_room_size: max_room_size,
             min_room_size: min_room_size,
             room_distance: room_distance,
@@ -53,24 +55,22 @@ impl RoomGen {
     }
 
     fn generate_box(&mut self, level: &mut GridLevel<Tile>) -> Room {
-        let min_range_x = Range::new(0, level.get_width());
-        let min_range_y = Range::new(0, level.get_height());
         let min = Point::new(
-            min_range_x.ind_sample(&mut self.rand_x),
-            min_range_y.ind_sample(&mut self.rand_y),
+            self.rand_x.gen_range(0, level.get_width()),
+            self.rand_y.gen_range(0, level.get_height()),
         );
 
-        let max_range = Range::new(self.min_room_size, self.max_room_size);
         let mut max = Point::new(
-            max_range.ind_sample(&mut self.rand_x),
-            max_range.ind_sample(&mut self.rand_y),
+            self.rand_x.gen_range(self.min_room_size, self.max_room_size),
+            self.rand_y.gen_range(self.min_room_size, self.max_room_size),
         );
+
         max.x += min.x;
         max.y += min.y;
         max.x += self.room_distance;
         max.y += self.room_distance;
 
-        Room { min: min, max: max }
+        Room { min, max }
     }
 
     fn check_collisions(&self, room: &Room) -> bool {

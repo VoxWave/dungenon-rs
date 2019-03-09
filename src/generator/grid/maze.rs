@@ -2,24 +2,26 @@ use crate::level::{add_isize_to_usize, GridLevel};
 
 use crate::Vector;
 
-use rand::os::OsRng;
-use rand::XorShiftRng;
-use rand::Rand;
-use rand::Rng;
+use rand::{
+    FromEntropy,
+    prelude::SliceRandom,
+    rngs::SmallRng,
+    Rng,
+};
 
 use crate::tile::Tile;
 use crate::util::Direction;
 
 pub struct MazeGen {
     pub pos: Vector<usize>,
-    rand: XorShiftRng,
+    rand: SmallRng,
 }
 
 impl MazeGen {
     pub fn new(x: usize, y: usize) -> MazeGen {
         MazeGen {
             pos: Vector::new(x, y),
-            rand: XorShiftRng::rand(&mut OsRng::new().unwrap()),
+            rand: SmallRng::from_entropy(),
         }
     }
 
@@ -37,7 +39,7 @@ impl MazeGen {
                     }
                     match neighbours {
                         Some(mut neighbours) => {
-                            self.rand.shuffle(&mut neighbours);
+                            neighbours.shuffle(&mut self.rand);
                             while let Some(p) = neighbours.pop() {
                                 stack.push(p);
                             }

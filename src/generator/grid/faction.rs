@@ -1,10 +1,11 @@
 use std::mem;
 
-use rand::os::OsRng;
-use rand::XorShiftRng;
-use rand::Rand;
+use rand::FromEntropy;
+use rand::RngCore;
+use rand::rngs::SmallRng;
 use rand::Rng;
 use rand::SeedableRng;
+use rand::prelude::SliceRandom;
 
 use rayon::prelude::*;
 use smallvec::SmallVec;
@@ -16,13 +17,13 @@ use crate::util::{Direction, Error};
 use crate::level::{add_isize_to_usize, GridLevel};
 
 pub struct FactionGen {
-    rand: XorShiftRng,
+    rand: SmallRng,
 }
 
 impl FactionGen {
     pub fn new() -> FactionGen {
         FactionGen {
-            rand: XorShiftRng::rand(&mut OsRng::new().unwrap()),
+            rand: SmallRng::from_entropy(),
         }
     }
     #[inline]
@@ -40,7 +41,8 @@ impl FactionGen {
                     ys.flat_map(move |y| {
                         let x_seed = (x as u64 ^ (x as u64 >> 32)) as u32;
                         let y_seed = (y as u64 ^ (y as u64 >> 32)) as u32;
-                        let mut rand = XorShiftRng::from_seed([number, x_seed, y_seed, 1]);
+                        let seed = u32_array_to_u8_array([number, x_seed, y_seed, 1]);
+                        let mut rand = SmallRng::from_seed(seed);
                         rand.next_u32();
                         rand.next_u32();
                         let mut deck = SmallVec::<[_; 9]>::new();
@@ -57,7 +59,7 @@ impl FactionGen {
                             }
                         }
                         Self::get_faction_neighbours(x, y, &mut deck, level_ref);
-                        rand.choose(&deck).map(|f| ((x, y), f.clone()))
+                        deck.choose(&mut rand).map(|f| ((x, y), f.clone()))
                     })
                 })
                 .for_each(|((x, y), f)| {
@@ -89,6 +91,13 @@ impl FactionGen {
         }
     }
 }
+
+fn u32_array_to_u8_array(array: [u32;4]) -> [u8;16] {
+    unsafe {
+        mem::transmute(array)
+    }
+}
+
 //this struct is unsafe. Use it with great caution.
 struct SuperUnsafe(*mut GridLevel<Faction>);
 unsafe impl Sync for SuperUnsafe {}

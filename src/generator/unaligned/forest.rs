@@ -3,7 +3,6 @@ use crate::{Vector, Point};
 use crate::level::{Object, UnalignedLevel};
 
 use rand::Rng;
-use rand::distributions::{IndependentSample, Range};
 
 use poisson::{Builder, Type};
 use poisson::algorithm::Bridson;
@@ -32,17 +31,16 @@ pub fn generate_forest<R: Rng>(
     let (rand_x, rand_y) = rands;
 
     let min_side = f32::min(scaler.x, scaler.y);
-    let tree_size = Range::new(min_r, max_r);
     let poisson_gen =
         Builder::<_, Vector<f32>>::with_samples(tries, max_r / min_side, Type::Normal)
             .build(rand_y, Bridson);
 
     for v in poisson_gen {
         let hitbox = Circle::new(
-            v.component_mul(&scaler).coords,
-            tree_size.ind_sample(rand_x),
+            Point::from(v.component_mul(&scaler)),
+            rand_x.gen_range(min_r, max_r),
         );
-        let object = Object::new("tree".to_owned(), Box::new(hitbox), min_corner.coords);
+        let object = Object::new("tree".to_owned(), Box::new(hitbox), Point::from(min_corner));
         level.add(object);
     }
 }
