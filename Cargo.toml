@@ -16,7 +16,6 @@ alga = "0.8.2"
 git = "https://github.com/WaDelma/kolli-desu.git"
 
 [dependencies.poisson]
-branch = "dev2"
 git = "https://github.com/WaDelma/poisson.git"
 
 [workspace]
