@@ -14,10 +14,10 @@ alga = "0.8.2"
 
 [dependencies.kolli-desu]
 git = "https://github.com/WaDelma/kolli-desu.git"
-branch = "master"
 
 [dependencies.poisson]
 git = "https://github.com/WaDelma/poisson.git"
+branch = "master"
 
 [workspace]
 members = ["demos/pinter"]
