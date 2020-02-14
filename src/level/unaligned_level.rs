@@ -14,7 +14,7 @@ use kolli_desu::shapes::Shape;
 use kolli_desu::gjk;
 
 pub struct UnalignedLevel<T> {
-    objects: Vec<Object<T>>,
+    pub objects: Vec<Object<T>>,
 }
 
 impl<T> UnalignedLevel<T> {
