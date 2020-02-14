@@ -22,12 +22,14 @@ use image::Rgb;
 use std::collections::HashMap;
 
 fn main() {
-    let mut colors = HashMap::new();
+    let mut faction_to_color = HashMap::new();
+    let mut color_to_faction = HashMap::new();
     let mut index = 0;
     for r in 0..256 {
         for g in 0..256 {
             for b in 0..256 {
-                colors.insert(Faction::Faction(index), Rgb([r as u8, g as u8, b as u8]));
+                faction_to_color.insert(Faction::Faction(index), Rgb([r as u8, g as u8, b as u8]));
+                color_to_faction.insert(Rgb([r as u8, g as u8, b as u8]), Faction::Faction(index));
                 index += 1;
             }
         }
@@ -50,7 +52,11 @@ fn main() {
         factiongen.generate(&mut level, &mut buffer);
         println!("{} iterations done.", i);
     }
-    faction_png_export(String::from("picture"), &colors, &mut level);
+    faction_png_export(String::from("picture"), &faction_to_color, &mut level);
+}
+
+fn load_level_from_file(path: PathBuf) {
+
 }
 
 fn populate_level(level: &mut Level<Faction>, rangemax: usize) {
