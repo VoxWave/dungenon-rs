@@ -22,7 +22,7 @@ pub struct FactionGen {
 impl FactionGen {
     pub fn new() -> Self {
         Self {
-            seed: OsRng::new().unwrap().gen(),
+            seed: OsRng::new().unwrap().gen::<u128>() << 1 | 1,
         }
     }
     #[inline]
@@ -37,34 +37,22 @@ impl FactionGen {
     }
 }
 
-struct CustomRng {
-    lehmer1: u128,
-    lehmer2: u128,
-    lehmer3: u128,
-    lehmer4: u128,
+struct LehmerRng {
+    lehmer: u128,
+    mult: u128,
 }
 
-impl CustomRng {
-    fn new(seed: u128) -> Self {
+impl LehmerRng {
+    fn new(seed: u128, mult: u128) -> Self {
         Self {
-            lehmer1: seed << 1 | 1,
-            lehmer2: seed << 1 | 1,
-            lehmer3: seed << 1 | 1,
-            lehmer4: seed << 1 | 1,
+            lehmer: seed << 1 | 1,
+            mult,
         }
     }
 
-    fn gen(&mut self) -> (u64, u64, u64, u64) {
-        self.lehmer1 = self.lehmer1.wrapping_mul(LEHMER_MULT0);
-        self.lehmer2 = self.lehmer2.wrapping_mul(LEHMER_MULT1);
-        self.lehmer3 = self.lehmer3.wrapping_mul(LEHMER_MULT2);
-        self.lehmer4 = self.lehmer4.wrapping_mul(LEHMER_MULT3);
-        return (
-            (self.lehmer1 >> 64) as u64,
-            (self.lehmer2 >> 64) as u64,
-            (self.lehmer3 >> 64) as u64,
-            (self.lehmer4 >> 64) as u64,
-        );
+    fn gen(&mut self) -> u64 {
+        self.lehmer = self.lehmer.wrapping_mul(self.mult);
+        return (self.lehmer >> 64) as u64;
     }
 }
 
@@ -76,10 +64,14 @@ fn index(width: usize, x: i64, y: i64) -> usize {
     (x + y * width as i64) as usize
 }
 
-// TODO: Fix this
-// TODO: Benchmark this
+fn mix(a: u128, b: usize, mult: u128) -> u128 {
+    a ^ ((b << 1 | 1) as u128).wrapping_mul(mult)
+}
+
 pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) -> u128 {
+    const FACTOR: usize = 4;
     let height = prev.len() / width;
+    let corrected = (height / FACTOR) * FACTOR;
 
     next.par_chunks_mut(width)
         .enumerate()
@@ -88,14 +80,23 @@ pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) ->
             let mut deck1 = SmallVec::<[_; 9]>::new();
             let mut deck2 = SmallVec::<[_; 9]>::new();
             let mut deck3 = SmallVec::<[_; 9]>::new();
-            let mut rng = CustomRng::new(seed ^ (y as u128 * 91));
-            for x in (0..height).step_by(4) {
-                let (r0, r1, r2, r3) = rng.gen();
+            let mut rng0 = LehmerRng::new(mix(seed, y, LEHMER_MULT0), LEHMER_MULT0);
+            let mut rng1 = LehmerRng::new(mix(seed, y, LEHMER_MULT1), LEHMER_MULT1);
+            let mut rng2 = LehmerRng::new(mix(seed, y, LEHMER_MULT2), LEHMER_MULT2);
+            let mut rng3 = LehmerRng::new(mix(seed, y, LEHMER_MULT3), LEHMER_MULT3);
+            let mut calc = |x, deck: &mut SmallVec<[_; 9]>, n| {
+                if !deck.is_empty() {
+                    let f = select(&deck[..], n);
+                    chunk[x] = Faction::Faction(f);
+                    deck.clear();
+                }
+            };
+            for x in (0..corrected).step_by(FACTOR) {
                 // x x x x x x
                 // x o o o o x
                 // x x x x x x
                 for dy in -1..=1 {
-                    for dx in -1..=4 {
+                    for dx in -1..=(FACTOR as i64) {
                         let xx = x as i64 + dx;
                         let yy = y as i64 + dy;
                         let idx = index(width, xx, yy);
@@ -115,23 +116,23 @@ pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) ->
                         }
                     }
                 }
-
-                if !deck0.is_empty() {
-                    chunk[x] = Faction::Faction(select(&deck0[..], r0))
+                calc(x + 0, &mut deck0, rng0.gen());
+                calc(x + 1, &mut deck1, rng1.gen());
+                calc(x + 2, &mut deck2, rng2.gen());
+                calc(x + 3, &mut deck3, rng3.gen());
+            }
+            for x in corrected..height {
+                for dy in -1..=1 {
+                    for dx in -1..=1 {
+                        let xx = x as i64 + dx;
+                        let yy = y as i64 + dy;
+                        let idx = index(width, xx, yy);
+                        if let Some(Faction::Faction(f)) = prev.get(idx) {
+                            deck0.push(*f);
+                        }
+                    }
                 }
-                if !deck1.is_empty() {
-                    chunk[x + 1] = Faction::Faction(select(&deck1[..], r1));
-                }
-                if !deck2.is_empty() {
-                    chunk[x + 2] = Faction::Faction(select(&deck2[..], r2));
-                }
-                if !deck3.is_empty() {
-                    chunk[x + 3] = Faction::Faction(select(&deck3[..], r3));
-                }
-                deck0.clear();
-                deck1.clear();
-                deck2.clear();
-                deck3.clear();
+                calc(x, &mut deck0, rng0.gen());
             }
         });
     seed.wrapping_mul(LEHMER_MULT4)
