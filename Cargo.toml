@@ -4,14 +4,21 @@ version = "0.4.0"
 authors = ["VoxWave <victor_bankowski@hotmail.com>"]
 
 [dependencies]
-rand = "0.3"
-nalgebra = "0.13"
+rand = "0.6"
+nalgebra = "0.17"
 rayon = "0.8"
 smallvec = "0.3"
-poisson = "0.9"
+poisson = "0.10.1"
+
+[dev-dependencies]
+criterion = "0.3.4"
 
 # [dependencies.poisson]
 # git = "https://github.com/WaDelma/poisson.git"
+
+[[bench]]
+name = "benchmark"
+harness = false
 
 [workspace]
 members = ["demos/pinter"]
