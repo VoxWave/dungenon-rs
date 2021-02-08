@@ -30,6 +30,7 @@ impl FactionGen {
         self.seed = tick(
             self.seed,
             level.get_width(),
+            level.get_height(),
             &level.tiles.data[..],
             &mut buffer.tiles.data[..],
         );
@@ -52,7 +53,7 @@ impl LehmerRng {
 
     fn gen(&mut self) -> u64 {
         self.lehmer = self.lehmer.wrapping_mul(self.mult);
-        return (self.lehmer >> 64) as u64;
+        (self.lehmer >> 64) as u64
     }
 }
 
@@ -68,10 +69,15 @@ fn mix(a: u128, b: usize, mult: u128) -> u128 {
     a ^ ((b << 1 | 1) as u128).wrapping_mul(mult)
 }
 
-pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) -> u128 {
+pub fn tick(
+    seed: u128,
+    width: usize,
+    height: usize,
+    prev: &[Faction],
+    next: &mut [Faction],
+) -> u128 {
     const FACTOR: usize = 4;
-    let height = prev.len() / width;
-    let corrected = (height / FACTOR) * FACTOR;
+    let corrected = (width / FACTOR) * FACTOR;
 
     next.par_chunks_mut(width)
         .enumerate()
@@ -91,14 +97,28 @@ pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) ->
                     deck.clear();
                 }
             };
+            let start_y = if y == 0 { 0 } else { -1 };
+            let end_y = if y == height - 1 { 0 } else { 1 };
             for x in (0..corrected).step_by(FACTOR) {
+                let start_x = if x == 0 { 0 } else { -1 };
+                let end_x = FACTOR as i64 - if x == corrected - FACTOR { 1 } else { 0 };
                 // x x x x x x
                 // x o o o o x
                 // x x x x x x
-                for dy in -1..=1 {
-                    for dx in -1..=(FACTOR as i64) {
+                for dy in start_y..=end_y {
+                    for dx in start_x..=end_x {
                         let xx = x as i64 + dx;
                         let yy = y as i64 + dy;
+                        debug_assert!(0 <= xx);
+                        debug_assert!(
+                            xx < width as i64,
+                            format!("x: {}, cor: {}, {} < {}", corrected, x, xx, width)
+                        );
+                        debug_assert!(0 <= yy);
+                        debug_assert!(
+                            yy < height as i64,
+                            format!("y: {}, cor: {}, {} < {}", corrected, y, yy, height)
+                        );
                         let idx = index(width, xx, yy);
                         if let Some(Faction::Faction(f)) = prev.get(idx) {
                             if dx <= 1 {
@@ -121,7 +141,7 @@ pub fn tick(seed: u128, width: usize, prev: &[Faction], next: &mut [Faction]) ->
                 calc(x + 2, &mut deck2, rng2.gen());
                 calc(x + 3, &mut deck3, rng3.gen());
             }
-            for x in corrected..height {
+            for x in corrected..width {
                 for dy in -1..=1 {
                     for dx in -1..=1 {
                         let xx = x as i64 + dx;
