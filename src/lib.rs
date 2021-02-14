@@ -1,8 +1,8 @@
 extern crate nalgebra as na;
+extern crate poisson;
 extern crate rand;
 extern crate rayon;
 extern crate smallvec;
-extern crate poisson;
 
 pub mod generator;
 pub mod level;
