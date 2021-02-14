@@ -2,44 +2,7 @@ extern crate criterion;
 extern crate dungenon;
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use dungenon::{
-    generator::{FactionGen, FactionGen2},
-    level::GridLevel,
-};
-
-pub fn compare_implementations(c: &mut Criterion) {
-    let (width, height, rounds) = (1024, 1024, 10);
-    let mut group = c.benchmark_group("by algorithm");
-    group.bench_function("factiongen1", |b| {
-        b.iter_with_setup(
-            || {
-                let a = GridLevel::new(width, height);
-                (FactionGen::new(), a.clone(), a)
-            },
-            |(mut gen, mut a, mut b)| {
-                (0..rounds).for_each(|_| {
-                    gen.generate(&mut a, &mut b);
-                });
-                black_box((a, b));
-            },
-        );
-    });
-    group.bench_function("factiongen2", |b| {
-        b.iter_with_setup(
-            || {
-                let a = GridLevel::new(width, height);
-                (FactionGen2::new(), a.clone(), a)
-            },
-            |(mut gen, mut a, mut b)| {
-                (0..rounds).for_each(|_| {
-                    gen.generate(&mut a, &mut b);
-                });
-                black_box((a, b));
-            },
-        );
-    });
-    group.finish();
-}
+use dungenon::{generator::FactionGen, level::GridLevel};
 
 pub fn compare_sizes(c: &mut Criterion) {
     let mut group = c.benchmark_group("by size");
@@ -49,7 +12,7 @@ pub fn compare_sizes(c: &mut Criterion) {
             b.iter_with_setup(
                 || {
                     let a = GridLevel::new(side, side);
-                    (FactionGen2::new(), a.clone(), a)
+                    (FactionGen::new(), a.clone(), a)
                 },
                 |(mut gen, mut a, mut b)| {
                     (0..10).for_each(|_| {
@@ -77,7 +40,7 @@ pub fn compare_aspect_ratio(c: &mut Criterion) {
                 b.iter_with_setup(
                     || {
                         let a = GridLevel::new(width, height);
-                        (FactionGen2::new(), a.clone(), a)
+                        (FactionGen::new(), a.clone(), a)
                     },
                     |(mut gen, mut a, mut b)| {
                         (0..10).for_each(|_| {
@@ -92,10 +55,5 @@ pub fn compare_aspect_ratio(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(
-    benches,
-    compare_implementations,
-    compare_aspect_ratio,
-    compare_sizes
-);
+criterion_group!(benches, compare_aspect_ratio, compare_sizes);
 criterion_main!(benches);

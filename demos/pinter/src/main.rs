@@ -6,7 +6,7 @@ extern crate rand;
 use std::io;
 use std::path::PathBuf;
 
-use dungenon::generator::FactionGen2 as FactionGen;
+use dungenon::generator::FactionGen;
 use dungenon::level::GridLevel as Level;
 use dungenon::tile::Faction;
 use dungenon::util::Error;
