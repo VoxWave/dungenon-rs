@@ -72,6 +72,10 @@ impl<T> Deref for StaticVec<T> {
     }
 }
 
+fn init_lehmer(seed: Seed) -> Seed {
+    seed << 1 | 1
+}
+
 pub struct FactionGen {
     seed: Seed,
 }
@@ -79,10 +83,12 @@ pub struct FactionGen {
 impl FactionGen {
     pub fn new() -> Self {
         Self {
-            seed: OsRng::new().unwrap().gen::<Seed>() << 1 | 1,
+            seed: init_lehmer(OsRng::new().unwrap().gen::<Seed>()),
         }
     }
     pub fn generate(&mut self, level: &mut GridLevel<Faction>, buffer: &mut GridLevel<Faction>) {
+        assert_eq!(level.get_width(), buffer.get_width());
+        assert_eq!(level.get_height(), buffer.get_height());
         self.seed = tick(
             self.seed,
             level.get_width(),
@@ -98,7 +104,11 @@ fn select(deck: &[usize], n: usize) -> usize {
     deck[n % deck.len()]
 }
 
-fn index(width: usize, _height: usize, x: i64, y: i64) -> usize {
+fn index(width: usize, height: usize, x: i64, y: i64) -> usize {
+    debug_assert!(0 <= x, format!("0 <= {}", x));
+    debug_assert!((x as usize) < width, format!("{} < {}", x, width));
+    debug_assert!(0 <= y, format!("0 <= {}", y));
+    debug_assert!((y as usize) < height, format!("{} < {}", y, height));
     (x + y * width as i64) as usize
 }
 
@@ -122,6 +132,7 @@ pub fn tick(
         .for_each(|(y, chunk)| {
             chunk.chunks_mut(width).enumerate().for_each(|(yy, chunk)| {
                 let yyy = y * rows + yy;
+                debug_assert!(yyy < height);
                 row_tick(seed, yyy, width, height, corrected, prev, chunk)
             });
         });
@@ -147,8 +158,10 @@ fn row_tick(
     let mut deck = Deck::new();
     let mut seed = seed;
     for x in corrected..width {
-        for dy in -1..=1 {
-            for dx in -1..=1 {
+        let start_x = if x == 0 { 0 } else { -1 };
+        let end_x = if x == width - 1 { 0 } else { 1 };
+        for dy in start_y..=end_y {
+            for dx in start_x..=end_x {
                 let xx = x as i64 + dx;
                 let yy = y as i64 + dy;
                 let idx = index(width, height, xx, yy);
@@ -159,7 +172,7 @@ fn row_tick(
         }
         if !deck.is_empty() {
             seed = seed.wrapping_mul(LEHMER_MULT0);
-            let f = select(&*deck, (seed >> BIT_LENGTH) as usize);
+            let f = select(&deck, (seed >> BIT_LENGTH) as usize);
             chunk[x] = Faction::Faction(f);
             deck.clear();
         }
@@ -182,16 +195,16 @@ pub fn inner_tick(
     let mut deck2 = Deck::new();
     let mut deck3 = Deck::new();
     let mut rngs: [Seed; 4] = [
-        mix(seed, y, LEHMER_MULT0) << 1 | 1,
-        mix(seed, y, LEHMER_MULT1) << 1 | 1,
-        mix(seed, y, LEHMER_MULT2) << 1 | 1,
-        mix(seed, y, LEHMER_MULT3) << 1 | 1,
+        init_lehmer(mix(seed, y, LEHMER_MULT0)),
+        init_lehmer(mix(seed, y, LEHMER_MULT1)),
+        init_lehmer(mix(seed, y, LEHMER_MULT2)),
+        init_lehmer(mix(seed, y, LEHMER_MULT3)),
     ];
-    let len = chunk.len();
+    let chunk_len = chunk.len();
     let mut calc = |x, deck: &mut Deck<_>, n| {
         if !deck.is_empty() {
-            let f = select(&*deck, n);
-            if x < chunk.len() {
+            let f = select(&deck, n);
+            if x < chunk_len {
                 chunk[x] = Faction::Faction(f);
             } else {
                 debug_assert!(false);
@@ -200,7 +213,7 @@ pub fn inner_tick(
             deck.clear();
         }
     };
-    for x in (0..len).step_by(FACTOR) {
+    for x in (0..chunk_len).step_by(FACTOR) {
         let start_x = if x == 0 { 0 } else { -1 };
         let end_x = FACTOR as i64 - if x == corrected - FACTOR { 1 } else { 0 };
         // x x x x x x
