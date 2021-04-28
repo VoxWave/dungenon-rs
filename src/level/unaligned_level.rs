@@ -1,8 +1,8 @@
-use {Vector, Point};
+use {Point, Vector};
 
 use na::zero;
 
-use rayon::iter::{ParallelIterator};
+use rayon::iter::ParallelIterator;
 use rayon::prelude::*;
 
 pub struct UnalignedLevel<T> {
@@ -11,7 +11,7 @@ pub struct UnalignedLevel<T> {
 
 impl<T> UnalignedLevel<T> {
     pub fn new() -> UnalignedLevel<T> {
-        UnalignedLevel{
+        UnalignedLevel {
             objects: Vec::new(),
         }
     }
@@ -23,7 +23,6 @@ impl<T> UnalignedLevel<T> {
 }
 
 impl<T: Sync> UnalignedLevel<T> {
-    
     ///Adds an `Object` to the level if it doesn't collide with other objects
     pub fn add(&mut self, obj: Object<T>) -> bool {
         if self.collides(&obj.hitbox) {
@@ -34,11 +33,10 @@ impl<T: Sync> UnalignedLevel<T> {
         }
     }
 
-
     pub fn collides(&self, hitbox: &Hitbox) -> bool {
         (&self.objects).par_iter().any(|o| o.collides(hitbox))
     }
-} 
+}
 
 pub struct Object<T> {
     pub value: T,
@@ -46,10 +44,7 @@ pub struct Object<T> {
 }
 impl<T> Object<T> {
     pub fn new(value: T, hitbox: Hitbox) -> Self {
-        Object{
-            value,
-            hitbox,
-        }
+        Object { value, hitbox }
     }
 
     pub fn collides(&self, hitbox: &Hitbox) -> bool {
@@ -68,9 +63,9 @@ impl Hitbox {
         match (self, hitbox) {
             (&Circle(ref a_lpos, ref a_radius), &Circle(ref b_lpos, ref b_radius)) => {
                 ((*a_lpos) - (*b_lpos)).norm_squared() <= (*a_radius + *b_radius).powi(2)
-            },
-            (&Circle(ref c_lpos, ref c_radius), &Aabb(ref a_lpos, ref a_sides)) |
-            (&Aabb(ref a_lpos, ref a_sides), &Circle(ref c_lpos, ref c_radius)) => {
+            }
+            (&Circle(ref c_lpos, ref c_radius), &Aabb(ref a_lpos, ref a_sides))
+            | (&Aabb(ref a_lpos, ref a_sides), &Circle(ref c_lpos, ref c_radius)) => {
                 let width = a_sides.x.abs() / 2.;
                 let height = a_sides.y.abs() / 2.;
                 let aabb_center = *a_lpos;
@@ -80,8 +75,11 @@ impl Hitbox {
                     ca = ca.normalize();
                 }
                 let outer = circle_center + *c_radius * ca;
-                point_in_aabb(Point::from_coordinates(outer), (Point::from_coordinates(aabb_center), width, height))
-            },
+                point_in_aabb(
+                    Point::from(outer),
+                    (Point::from(aabb_center), width, height),
+                )
+            }
             (&Aabb(ref a1_lpos, ref a1_sides), &Aabb(ref a2_lpos, ref a2_sides)) => {
                 let a1_center = *a1_lpos;
                 let a2_center = *a2_lpos;
@@ -89,18 +87,18 @@ impl Hitbox {
                 let a1_height = a1_sides.y.abs() / 2.;
                 let a2_width = a2_sides.x.abs() / 2.;
                 let a2_height = a2_sides.y.abs() / 2.;
-                (a1_center.x - a1_width) <= (a2_center.x + a2_width) &&
-                (a1_center.x + a1_width) >= (a2_center.x - a2_width) &&
-                (a1_center.y - a1_height) <= (a2_center.y + a2_height) &&
-                (a1_center.y + a1_height) >= (a2_center.y - a2_height)
-            },
+                (a1_center.x - a1_width) <= (a2_center.x + a2_width)
+                    && (a1_center.x + a1_width) >= (a2_center.x - a2_width)
+                    && (a1_center.y - a1_height) <= (a2_center.y + a2_height)
+                    && (a1_center.y + a1_height) >= (a2_center.y - a2_height)
+            }
         }
     }
 }
 
 fn point_in_aabb(point: Point<f32>, (center, width, height): (Point<f32>, f32, f32)) -> bool {
-    point.x >= (center.x - width) &&
-    point.x <= (center.x + width) &&
-    point.y >= (center.y - height) &&
-    point.y <= (center.y + height)
+    point.x >= (center.x - width)
+        && point.x <= (center.x + width)
+        && point.y >= (center.y - height)
+        && point.y <= (center.y + height)
 }
