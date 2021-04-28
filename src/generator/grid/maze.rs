@@ -1,14 +1,10 @@
 use level::{add_isize_to_usize, GridLevel};
 
+use rand::{rngs::OsRng, Rng, SeedableRng, XorShiftRng};
 use Vector;
 
-use rand::os::OsRng;
-use rand::XorShiftRng;
-use rand::Rand;
-use rand::Rng;
-
 use tile::Tile;
-use util::{Direction};
+use util::Direction;
 
 pub struct MazeGen {
     pub pos: Vector<usize>,
@@ -17,9 +13,9 @@ pub struct MazeGen {
 
 impl MazeGen {
     pub fn new(x: usize, y: usize) -> MazeGen {
-        MazeGen{
-            pos: Vector::new(x,y),
-            rand: XorShiftRng::rand(&mut OsRng::new().unwrap()),
+        MazeGen {
+            pos: Vector::new(x, y),
+            rand: XorShiftRng::from_rng(&mut OsRng::new().unwrap()).unwrap(),
         }
     }
 
@@ -30,11 +26,10 @@ impl MazeGen {
         'mainloop: while let Some(cur) = stack.pop() {
             let neighbours = Self::get_neighbours(level, &cur);
             match level.get_mut_tile_with_vec(&cur) {
-
                 Ok(tile) => {
                     match *tile {
-                        Tile::Void(_) | Tile::Floor(_) => {continue 'mainloop},
-                        _ => {},
+                        Tile::Void(_) | Tile::Floor(_) => continue 'mainloop,
+                        _ => {}
                     }
                     match neighbours {
                         Some(mut neighbours) => {
@@ -43,14 +38,13 @@ impl MazeGen {
                                 stack.push(p);
                             }
                             *tile = Tile::Floor(0);
-                        },
-                        None => continue 'mainloop
+                        }
+                        None => continue 'mainloop,
                     }
-                },
+                }
 
-                Err(Error::IndexOutOfBounds) => continue 'mainloop
+                Err(Error::IndexOutOfBounds) => continue 'mainloop,
             }
-
         }
     }
 
@@ -60,8 +54,11 @@ impl MazeGen {
         for d in Direction::get_orthogonal_dirs() {
             let pos = pos.clone();
             let dvec = d.get_vec();
-            let coord = match (add_isize_to_usize(dvec.x, pos.x), add_isize_to_usize(dvec.y, pos.y)) {
-                (Some(x), Some(y)) => (x,y),
+            let coord = match (
+                add_isize_to_usize(dvec.x, pos.x),
+                add_isize_to_usize(dvec.y, pos.y),
+            ) {
+                (Some(x), Some(y)) => (x, y),
                 _ => continue,
             };
             match level.get_tile_with_tuple(coord) {
@@ -70,12 +67,11 @@ impl MazeGen {
                     if floors > 1 {
                         return None;
                     }
-                },
-                _ => {},
+                }
+                _ => {}
             }
             neighbours.push(Vector::new(coord.0, coord.1));
         }
         Some(neighbours)
     }
-
 }

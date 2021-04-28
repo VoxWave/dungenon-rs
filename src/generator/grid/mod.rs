@@ -1,4 +1,4 @@
 pub mod dungeon;
-pub mod room;
-pub mod maze;
 pub mod faction;
+pub mod maze;
+pub mod room;
